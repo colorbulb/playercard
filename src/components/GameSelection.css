@@ -5,6 +5,15 @@
   width: 100%;
 }
 
+.logo {
+  max-width: 200px;
+  height: auto;
+  margin-bottom: 20px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .game-selection-title {
   font-size: 3rem;
   color: white;

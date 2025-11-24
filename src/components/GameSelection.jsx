@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './GameSelection.css';
+import logo from '/logo.png';
 
 function GameSelection({ onGameSelect }) {
   const [showMemoryDifficulty, setShowMemoryDifficulty] = useState(false);
@@ -14,6 +15,7 @@ function GameSelection({ onGameSelect }) {
 
   return (
     <div className="game-selection">
+      <img src={logo} width="100px" alt="Logo" />
       <h1 className="game-selection-title">NextElite Game Collection</h1>
       <p className="game-selection-subtitle">Choose a game to play</p>
       
