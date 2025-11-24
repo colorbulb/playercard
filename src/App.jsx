@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import GameSelection from './components/GameSelection';
 import Big2 from './components/games/Big2';
-import BlackJack from './components/games/BlackJack';
 import MemoryGrid from './components/games/MemoryGrid';
 import MemoryGridIcons from './components/games/MemoryGridIcons';
 import ColorBalls from './components/games/ColorBalls';
@@ -31,8 +30,6 @@ function App() {
         <GameSelection onGameSelect={handleGameSelect} />
       ) : currentGame === 'big2' ? (
         <Big2 onBack={handleBackToMenu} />
-      ) : currentGame === 'blackjack' ? (
-        <BlackJack onBack={handleBackToMenu} />
       ) : currentGame === 'memory' ? (
         <MemoryGrid difficulty={difficulty} onBack={handleBackToMenu} />
       ) : currentGame === 'memory-icons' ? (
