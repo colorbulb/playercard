@@ -114,4 +114,3 @@ Make sure your Firebase project has Realtime Database enabled with appropriate s
 ## License
 
 MIT
-
