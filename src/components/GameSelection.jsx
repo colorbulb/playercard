@@ -35,16 +35,6 @@ function GameSelection({ onGameSelect }) {
       {!showMemoryOptions && !showMemoryDifficulty ? (
         <Row className="g-3">
           <Col md={6} lg={4} xl={3}>
-            <Card className="game-card h-100" onClick={() => onGameSelect('big2')}>
-              <CardBody className="text-center">
-                <div className="game-icon">🃏</div>
-                <CardTitle tag="h2">Big 2</CardTitle>
-                <CardText>Classic card game</CardText>
-              </CardBody>
-            </Card>
-          </Col>
-          
-          <Col md={6} lg={4} xl={3}>
             <Card className="game-card h-100" onClick={() => onGameSelect('blackjack')}>
               <CardBody className="text-center">
                 <div className="game-icon">🎰</div>

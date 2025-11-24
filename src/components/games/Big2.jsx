@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Card, CardBody, CardTitle, CardText, Input } from 'reactstrap';
 import { saveScore, getHighScores } from '../../firebase/scores';
+import LandscapeOverlay from '../LandscapeOverlay';
 import './Big2.css';
 
 function Big2({ onBack }) {
@@ -94,8 +95,10 @@ function Big2({ onBack }) {
   };
 
   return (
-    <Container fluid className="big2-game">
-      <Row className="mb-3">
+    <>
+      <LandscapeOverlay />
+      <Container fluid className="big2-game">
+        <Row className="mb-3">
         <Col>
           <Button color="secondary" onClick={onBack}>← Back to Menu</Button>
         </Col>
@@ -216,6 +219,7 @@ function Big2({ onBack }) {
         </Card>
       </Container>
     </Container>
+    </>
   );
 }
 

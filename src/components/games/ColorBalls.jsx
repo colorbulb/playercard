@@ -1,10 +1,34 @@
 import { useState, useEffect, useRef } from 'react';
 import { Container, Row, Col, Button, Card, CardBody, CardTitle, CardText, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { saveScore, getHighScores } from '../../firebase/scores';
+import LandscapeOverlay from '../LandscapeOverlay';
 import './ColorBalls.css';
 
-// More colors and shapes
-const COLORS = ['🔴', '🟠', '🟡', '🟢', '🔵', '🟣', '⚫', '⚪', '🟤', '🔶', '🔷', '🔸', '🔹', '🟥', '🟧', '🟨', '🟩', '🟦', '🟪', '⬛', '⬜'];
+// Hex colors for balls
+const HEX_COLORS = [
+  '#FF0000', // Red
+  '#FF6B00', // Orange
+  '#FFD700', // Gold/Yellow
+  '#00FF00', // Green
+  '#0000FF', // Blue
+  '#8A2BE2', // Blue Violet
+  '#FF1493', // Deep Pink
+  '#00CED1', // Dark Turquoise
+  '#FF4500', // Orange Red
+  '#32CD32', // Lime Green
+  '#1E90FF', // Dodger Blue
+  '#FF69B4', // Hot Pink
+  '#FFA500', // Orange
+  '#9370DB', // Medium Purple
+  '#20B2AA', // Light Sea Green
+  '#DC143C', // Crimson
+  '#00FA9A', // Medium Spring Green
+  '#4169E1', // Royal Blue
+  '#FF6347', // Tomato
+  '#00BFFF', // Deep Sky Blue
+];
+
+// Shapes for balls
 const SHAPES = ['●', '■', '▲', '◆', '★', '♦', '♠', '♥', '♣', '☆', '◉', '◼', '◻', '◈', '⬟', '⬢', '⬡', '⭕', '🔺', '🔻'];
 
 const BALL_SIZE = 50;
@@ -78,24 +102,23 @@ function ColorBalls({ onBack }) {
     let targets = [];
     if (difficulty === 'easy') {
       // Easy: Only colors (3-4 colors)
-      const shuffled = [...COLORS].sort(() => Math.random() - 0.5);
+      const shuffled = [...HEX_COLORS].sort(() => Math.random() - 0.5);
       targets = shuffled.slice(0, Math.floor(Math.random() * 2) + 3).map(color => ({ type: 'color', value: color }));
     } else if (difficulty === 'medium') {
-      // Medium: Colors and some shapes (4-5 items)
-      const allItems = [...COLORS.slice(0, 10), ...SHAPES.slice(0, 5)];
-      const shuffled = allItems.sort(() => Math.random() - 0.5);
-      targets = shuffled.slice(0, Math.floor(Math.random() * 2) + 4).map(item => ({
-        type: COLORS.includes(item) ? 'color' : 'shape',
-        value: item
-      }));
+      // Medium: Only shapes (4-5 shapes)
+      const shuffled = [...SHAPES].sort(() => Math.random() - 0.5);
+      targets = shuffled.slice(0, Math.floor(Math.random() * 2) + 4).map(shape => ({ type: 'shape', value: shape }));
     } else {
-      // Hard: Mix of colors and shapes (5-6 items)
-      const allItems = [...COLORS, ...SHAPES];
-      const shuffled = allItems.sort(() => Math.random() - 0.5);
-      targets = shuffled.slice(0, Math.floor(Math.random() * 2) + 5).map(item => ({
-        type: COLORS.includes(item) ? 'color' : 'shape',
-        value: item
-      }));
+      // Hard: Color and shape combinations (5-6 items)
+      const colorShuffled = [...HEX_COLORS].sort(() => Math.random() - 0.5);
+      const shapeShuffled = [...SHAPES].sort(() => Math.random() - 0.5);
+      const colorCount = Math.floor(Math.random() * 2) + 3;
+      const shapeCount = Math.floor(Math.random() * 2) + 2;
+      
+      targets = [
+        ...colorShuffled.slice(0, colorCount).map(color => ({ type: 'color', value: color })),
+        ...shapeShuffled.slice(0, shapeCount).map(shape => ({ type: 'shape', value: shape }))
+      ];
     }
     
     setTargetItems(targets);
@@ -147,11 +170,25 @@ function ColorBalls({ onBack }) {
 
     // Spawn based on difficulty
     let item;
+    let type;
     if (difficulty === 'easy') {
-      item = COLORS[Math.floor(Math.random() * COLORS.length)];
+      // Easy: Only colors
+      item = HEX_COLORS[Math.floor(Math.random() * HEX_COLORS.length)];
+      type = 'color';
+    } else if (difficulty === 'medium') {
+      // Medium: Only shapes
+      item = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+      type = 'shape';
     } else {
-      const allItems = [...COLORS, ...SHAPES];
-      item = allItems[Math.floor(Math.random() * allItems.length)];
+      // Hard: Both colors and shapes
+      const useColor = Math.random() > 0.5;
+      if (useColor) {
+        item = HEX_COLORS[Math.floor(Math.random() * HEX_COLORS.length)];
+        type = 'color';
+      } else {
+        item = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+        type = 'shape';
+      }
     }
     
     const randomX = Math.random() * (gameArea.clientWidth - BALL_SIZE);
@@ -161,7 +198,7 @@ function ColorBalls({ onBack }) {
       x: randomX,
       y: 0,
       item: item,
-      type: COLORS.includes(item) ? 'color' : 'shape'
+      type: type
     }]);
   };
 
@@ -203,7 +240,9 @@ function ColorBalls({ onBack }) {
   };
 
   return (
-    <Container fluid className="color-balls-game">
+    <>
+      <LandscapeOverlay />
+      <Container fluid className="color-balls-game">
       <Row>
         <Col>
           <Button color="secondary" onClick={onBack} className="mb-3">← Back to Menu</Button>
@@ -267,11 +306,18 @@ function ColorBalls({ onBack }) {
                   <CardBody>
                     <CardTitle tag="h5">Tap These:</CardTitle>
                     <div className="target-items-list">
-                      {targetItems.map((item, index) => (
-                        <div key={index} className="target-item-display mb-2">
+                    {targetItems.map((item, index) => (
+                      <div key={index} className="target-item-display mb-2">
+                        {item.type === 'color' ? (
+                          <div 
+                            className="target-color-ball" 
+                            style={{ backgroundColor: item.value }}
+                          />
+                        ) : (
                           <span className="fs-3">{item.value}</span>
-                        </div>
-                      ))}
+                        )}
+                      </div>
+                    ))}
                     </div>
                   </CardBody>
                 </Card>
@@ -288,14 +334,15 @@ function ColorBalls({ onBack }) {
                       return (
                         <div
                           key={ball.id}
-                          className={`ball ${isTarget ? 'target' : 'non-target'}`}
+                          className="ball"
                           style={{
                             left: `${ball.x}px`,
                             top: `${ball.y}px`,
+                            backgroundColor: ball.type === 'color' ? ball.item : 'transparent'
                           }}
                           onClick={() => handleBallClick(ball)}
                         >
-                          {ball.item}
+                          {ball.type === 'shape' ? ball.item : ''}
                         </div>
                       );
                     })}
@@ -308,11 +355,18 @@ function ColorBalls({ onBack }) {
                   <CardBody>
                     <CardTitle tag="h5">Tap These:</CardTitle>
                     <div className="target-items-list">
-                      {targetItems.map((item, index) => (
-                        <div key={index} className="target-item-display mb-2">
+                    {targetItems.map((item, index) => (
+                      <div key={index} className="target-item-display mb-2">
+                        {item.type === 'color' ? (
+                          <div 
+                            className="target-color-ball" 
+                            style={{ backgroundColor: item.value }}
+                          />
+                        ) : (
                           <span className="fs-3">{item.value}</span>
-                        </div>
-                      ))}
+                        )}
+                      </div>
+                    ))}
                     </div>
                   </CardBody>
                 </Card>
@@ -328,7 +382,14 @@ function ColorBalls({ onBack }) {
                     <div className="d-flex justify-content-center flex-wrap gap-2">
                       {targetItems.map((item, index) => (
                         <div key={index} className="target-item-display">
-                          <span className="fs-3">{item.value}</span>
+                          {item.type === 'color' ? (
+                            <div 
+                              className="target-color-ball" 
+                              style={{ backgroundColor: item.value }}
+                            />
+                          ) : (
+                            <span className="fs-3">{item.value}</span>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -375,14 +436,14 @@ function ColorBalls({ onBack }) {
               size="lg"
               onClick={() => handleDifficultySelect('medium')}
             >
-              Medium - Colors & Some Shapes
+              Medium - Shapes Only
             </Button>
             <Button 
               color={difficulty === 'hard' ? 'danger' : 'outline-danger'} 
               size="lg"
               onClick={() => handleDifficultySelect('hard')}
             >
-              Hard - Colors & All Shapes
+              Hard - Colors & Shapes
             </Button>
           </div>
         </ModalBody>
@@ -391,6 +452,7 @@ function ColorBalls({ onBack }) {
         </ModalFooter>
       </Modal>
     </Container>
+    </>
   );
 }
 

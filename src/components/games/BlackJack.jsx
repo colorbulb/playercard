@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Card, CardBody, CardTitle, CardText, Input } from 'reactstrap';
 import { saveScore, getHighScores } from '../../firebase/scores';
+import LandscapeOverlay from '../LandscapeOverlay';
 import './BlackJack.css';
 
 function BlackJack({ onBack }) {
@@ -204,8 +205,13 @@ function BlackJack({ onBack }) {
   };
 
   const loadHighScores = async () => {
-    const scores = await getHighScores('Black Jack');
-    setHighScores(scores);
+    try {
+      const scores = await getHighScores('Black Jack');
+      setHighScores(scores);
+    } catch (error) {
+      // Silently handle errors - scores will just be empty
+      setHighScores([]);
+    }
   };
 
   const handleSaveScore = async () => {
@@ -226,37 +232,38 @@ function BlackJack({ onBack }) {
   };
 
   return (
-    <Container fluid className="blackjack-game">
-      <Row className="mb-3">
-        <Col>
-          <Button color="secondary" onClick={onBack}>← Back to Menu</Button>
-        </Col>
-      </Row>
-      
-      <Container>
-        <Card>
-          <CardBody>
-            <Row className="align-items-center mb-3">
-              <Col md={6}>
-                <CardTitle tag="h1">Black Jack</CardTitle>
-              </Col>
-              <Col md={6} className="text-md-end">
-                <Button 
-                  color="primary" 
-                  onClick={startGame} 
-                  disabled={gameStatus === 'playing' || gameStatus === 'dealer'}
-                >
-                  New Game
-                </Button>
-              </Col>
-            </Row>
+    <>
+      <LandscapeOverlay />
+      <Container fluid className="blackjack-game">
+        <Row className="mb-3">
+          <Col>
+            <Button color="secondary" onClick={onBack}>← Back to Menu</Button>
+          </Col>
+        </Row>
+        
+        <Container>
+          <Card>
+            <CardBody>
+              <Row className="align-items-center mb-4">
+                <Col md={6}>
+                  <CardTitle tag="h1">Black Jack</CardTitle>
+                </Col>
+                <Col md={6} className="text-md-end">
+                  <Button 
+                    color="primary" 
+                    onClick={startGame} 
+                    disabled={gameStatus === 'playing' || gameStatus === 'dealer'}
+                  >
+                    New Game
+                  </Button>
+                </Col>
+              </Row>
 
-            {gameStatus === 'finished' && showNameInput && (
-              <Card className="mb-3 bg-light">
-                <CardBody className="text-center">
-                  <CardTitle tag="h2">{getGameResult()}</CardTitle>
+              {gameStatus === 'finished' && showNameInput && (
+                <div className="mb-4 p-3 bg-light rounded text-center">
+                  <h2 className="mb-3">{getGameResult()}</h2>
                   {playerScore <= 21 && (dealerScore > 21 || playerScore > dealerScore) && (
-                    <div className="d-flex gap-2 justify-content-center flex-wrap mt-3">
+                    <div className="d-flex gap-2 justify-content-center flex-wrap">
                       <Input
                         type="text"
                         placeholder="Enter your name"
@@ -267,16 +274,14 @@ function BlackJack({ onBack }) {
                       <Button color="success" onClick={handleSaveScore}>Save Score</Button>
                     </div>
                   )}
-                </CardBody>
-              </Card>
-            )}
+                </div>
+              )}
 
-            <Card className="mb-3">
-              <CardBody>
-                <CardTitle tag="h5">Dealer ({dealerHidden ? '?' : dealerScore})</CardTitle>
+              <div className="mb-4 p-4 bg-white rounded">
+                <h5 className="mb-3">Dealer ({dealerHidden ? '?' : dealerScore})</h5>
                 <div className="cards-display">
                   {dealerHand.map((card, index) => (
-                    <div key={card.id} className="card">
+                    <div key={card.id} className="playing-card">
                       {dealerHidden && index === 1 ? (
                         <div className="card-back">🂠</div>
                       ) : (
@@ -292,15 +297,13 @@ function BlackJack({ onBack }) {
                     </div>
                   ))}
                 </div>
-              </CardBody>
-            </Card>
+              </div>
 
-            <Card className="mb-3">
-              <CardBody>
-                <CardTitle tag="h5">Player ({playerScore})</CardTitle>
+              <div className="mb-4 p-4 bg-white rounded">
+                <h5 className="mb-3">Player ({playerScore})</h5>
                 <div className="cards-display">
                   {playerHand.map(card => (
-                    <div key={card.id} className="card">
+                    <div key={card.id} className="playing-card">
                       <span className={`rank ${card.suit === '♥' || card.suit === '♦' ? 'red' : ''}`}>
                         {card.rank}
                       </span>
@@ -310,39 +313,35 @@ function BlackJack({ onBack }) {
                     </div>
                   ))}
                 </div>
-              </CardBody>
-            </Card>
+              </div>
 
-            {gameStatus === 'betting' && (
-              <Row className="mb-3">
-                <Col className="text-center">
-                  <Button color="primary" size="lg" onClick={startGame}>Deal Cards</Button>
-                </Col>
-              </Row>
-            )}
+              {gameStatus === 'betting' && (
+                <Row className="mb-4">
+                  <Col className="text-center">
+                    <Button color="primary" size="lg" onClick={startGame}>Deal Cards</Button>
+                  </Col>
+                </Row>
+              )}
 
-            {gameStatus === 'playing' && (
-              <Row className="mb-3">
-                <Col className="text-center">
-                  <div className="d-flex gap-2 justify-content-center">
-                    <Button color="success" size="lg" onClick={hit}>Hit</Button>
-                    <Button color="warning" size="lg" onClick={stand}>Stand</Button>
-                  </div>
-                </Col>
-              </Row>
-            )}
+              {gameStatus === 'playing' && (
+                <Row className="mb-4">
+                  <Col className="text-center">
+                    <div className="d-flex gap-2 justify-content-center">
+                      <Button color="success" size="lg" onClick={hit}>Hit</Button>
+                      <Button color="warning" size="lg" onClick={stand}>Stand</Button>
+                    </div>
+                  </Col>
+                </Row>
+              )}
 
-            {gameStatus === 'finished' && (
-              <Card className="mb-3">
-                <CardBody className="text-center">
-                  <CardTitle tag="h2">{getGameResult()}</CardTitle>
-                </CardBody>
-              </Card>
-            )}
+              {gameStatus === 'finished' && !showNameInput && (
+                <div className="mb-4 p-3 bg-light rounded text-center">
+                  <h2>{getGameResult()}</h2>
+                </div>
+              )}
 
-            <Card>
-              <CardBody>
-                <CardTitle tag="h5">High Scores</CardTitle>
+              <div className="mt-4">
+                <h5 className="mb-3">High Scores</h5>
                 <div className="scores-list">
                   {highScores.length > 0 ? (
                     highScores.map((score, index) => (
@@ -353,15 +352,15 @@ function BlackJack({ onBack }) {
                       </div>
                     ))
                   ) : (
-                    <CardText className="text-muted">No scores yet</CardText>
+                    <p className="text-muted">No scores yet</p>
                   )}
                 </div>
-              </CardBody>
-            </Card>
-          </CardBody>
-        </Card>
-      </Container>
+              </div>
+            </CardBody>
+          </Card>
+        </Container>
     </Container>
+    </>
   );
 }
 

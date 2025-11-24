@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Card, CardBody, CardTitle, CardText, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { saveScore, getHighScores } from '../../firebase/scores';
+import LandscapeOverlay from '../LandscapeOverlay';
 import './Minesweeper.css';
 
 const API_BASE = 'https://shadify.yurace.pro/api';
@@ -209,7 +210,9 @@ function Minesweeper({ onBack }) {
   };
 
   return (
-    <Container fluid className="minesweeper-game">
+    <>
+      <LandscapeOverlay />
+      <Container fluid className="minesweeper-game">
       <Row className="mb-3">
         <Col>
           <Button color="secondary" onClick={onBack}>← Back to Menu</Button>
@@ -392,6 +395,7 @@ function Minesweeper({ onBack }) {
         </Card>
       </Container>
     </Container>
+    </>
   );
 }
 

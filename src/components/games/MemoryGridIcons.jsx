@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Card, CardBody, CardTitle, CardText, Input } from 'reactstrap';
 import { saveScore, getHighScores } from '../../firebase/scores';
+import LandscapeOverlay from '../LandscapeOverlay';
 import './MemoryGridIcons.css';
 
 function MemoryGridIcons({ difficulty, onBack }) {
@@ -204,7 +205,9 @@ function MemoryGridIcons({ difficulty, onBack }) {
   };
 
   return (
-    <Container fluid className="memory-grid-icons-game">
+    <>
+      <LandscapeOverlay />
+      <Container fluid className="memory-grid-icons-game">
       <Row className="mb-3">
         <Col>
           <Button color="secondary" onClick={onBack}>← Back to Menu</Button>
@@ -345,6 +348,7 @@ function MemoryGridIcons({ difficulty, onBack }) {
         </Card>
       </Container>
     </Container>
+    </>
   );
 }
 

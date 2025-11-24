@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Card, CardBody, CardTitle, CardText, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { saveScore, getHighScores } from '../../firebase/scores';
+import LandscapeOverlay from '../LandscapeOverlay';
 import './Sudoku.css';
 
 const API_BASE = 'https://shadify.yurace.pro/api';
@@ -132,7 +133,9 @@ function Sudoku({ onBack }) {
   };
 
   return (
-    <Container fluid className="sudoku-game">
+    <>
+      <LandscapeOverlay />
+      <Container fluid className="sudoku-game">
       <Row className="mb-3">
         <Col>
           <Button color="secondary" onClick={onBack}>← Back to Menu</Button>
@@ -296,6 +299,7 @@ function Sudoku({ onBack }) {
         </Card>
       </Container>
     </Container>
+    </>
   );
 }
 

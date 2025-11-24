@@ -27,9 +27,10 @@ export const saveScore = async (gameName, difficulty, score, playerName = 'Anony
 export const getHighScores = async (gameName, difficulty = null, limit = 10) => {
   try {
     const scoresRef = ref(database, 'scores');
-    let scoresQuery = query(scoresRef, orderByChild('score'), limitToLast(limit));
     
-    const snapshot = await get(scoresQuery);
+    // Fetch all scores without ordering to avoid permission/index issues
+    // We'll filter and sort in JavaScript instead
+    const snapshot = await get(scoresRef);
     if (!snapshot.exists()) {
       return [];
     }
@@ -47,11 +48,20 @@ export const getHighScores = async (gameName, difficulty = null, limit = 10) => 
       }
     });
     
-    // Sort by score descending
-    scores.sort((a, b) => b.score - a.score);
+    // Sort by score descending for most games, but time ascending for memory games
+    if (gameName.includes('Memory Grid')) {
+      scores.sort((a, b) => (a.time || Infinity) - (b.time || Infinity));
+    } else {
+      scores.sort((a, b) => (b.score || 0) - (a.score || 0));
+    }
+    
     return scores.slice(0, limit);
   } catch (error) {
-    console.error('Error fetching scores:', error);
+    // Silently handle permission errors - Firebase rules may restrict access
+    // Only log if it's not a permission error
+    if (error.code !== 'PERMISSION_DENIED' && error.message && !error.message.includes('Permission denied')) {
+      console.warn('Error fetching scores:', error.message);
+    }
     return [];
   }
 };

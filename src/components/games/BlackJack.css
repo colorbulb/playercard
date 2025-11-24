@@ -105,13 +105,12 @@
   min-height: 100px;
 }
 
-/* Playing card styles - scoped to avoid Bootstrap conflicts */
-.blackjack-game .card,
-.blackjack-game .cards-display .card {
+/* Playing card styles - using specific class to avoid Bootstrap conflicts */
+.playing-card {
   width: 70px;
   height: 100px;
-  background: white;
-  border: 2px solid #333;
+  background: white !important;
+  border: 2px solid #333 !important;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -119,23 +118,25 @@
   padding: 8px;
   transition: all 0.2s ease;
   font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.blackjack-game .card .rank,
-.blackjack-game .cards-display .card .rank {
+.playing-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.playing-card .rank {
   font-size: 1.3rem;
 }
 
-.blackjack-game .card .suit,
-.blackjack-game .cards-display .card .suit {
+.playing-card .suit {
   font-size: 1.8rem;
   text-align: center;
 }
 
-.blackjack-game .card .rank.red,
-.blackjack-game .card .suit.red,
-.blackjack-game .cards-display .card .rank.red,
-.blackjack-game .cards-display .card .suit.red {
+.playing-card .rank.red,
+.playing-card .suit.red {
   color: red;
 }
 
@@ -145,19 +146,24 @@
     padding: 15px;
   }
 
-  .blackjack-game .card,
-  .blackjack-game .cards-display .card {
+  .playing-card {
     width: 60px;
     height: 85px;
   }
 }
 
 @media (max-width: 576px) {
-  .blackjack-game .card,
-  .blackjack-game .cards-display .card {
+  .playing-card {
     width: 50px;
     height: 72px;
-    font-size: 0.9rem;
+  }
+  
+  .playing-card .rank {
+    font-size: 1rem;
+  }
+  
+  .playing-card .suit {
+    font-size: 1.4rem;
   }
 }
 
