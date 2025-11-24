@@ -38,13 +38,31 @@ function MemoryGrid({ difficulty, onBack }) {
   }, [gameStatus]);
 
   const initializeGame = () => {
-    const symbols = ['🍎', '🍌', '🍇', '🍊', '🍓', '🍑', '🍒', '🥝', 
-                     '🍉', '🍐', '🥭', '🍍', '🥥', '🥑', '🍅', '🥕',
-                     '🌽', '🥒', '🥬', '🥦', '🧄', '🧅', '🥔', '🍠',
-                     '🥐', '🥨', '🧀', '🥚', '🍳', '🥞', '🥓', '🍖'];
+    // Create a standard deck of 52 playing cards
+    const suits = ['♠', '♥', '♦', '♣'];
+    const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+    const fullDeck = [];
     
-    const selectedSymbols = symbols.slice(0, config.pairs);
-    const pairs = [...selectedSymbols, ...selectedSymbols];
+    for (let suit of suits) {
+      for (let rank of ranks) {
+        fullDeck.push({ suit, rank, id: `${suit}-${rank}` });
+      }
+    }
+    
+    // Select random cards for pairs based on difficulty
+    const selectedCards = [];
+    const usedIndices = new Set();
+    
+    while (selectedCards.length < config.pairs) {
+      const randomIndex = Math.floor(Math.random() * fullDeck.length);
+      if (!usedIndices.has(randomIndex)) {
+        selectedCards.push(fullDeck[randomIndex]);
+        usedIndices.add(randomIndex);
+      }
+    }
+    
+    // Create pairs (each card appears twice)
+    const pairs = [...selectedCards, ...selectedCards];
     
     // Shuffle
     for (let i = pairs.length - 1; i > 0; i--) {
@@ -57,7 +75,7 @@ function MemoryGrid({ difficulty, onBack }) {
     for (let i = 0; i < config.size * config.size; i++) {
       newGrid.push({
         id: i,
-        symbol: pairs[i],
+        card: pairs[i],
         flipped: false,
         matched: false
       });
@@ -93,7 +111,7 @@ function MemoryGrid({ difficulty, onBack }) {
       const firstCard = newGrid.find(c => c.id === firstId);
       const secondCard = newGrid.find(c => c.id === secondId);
 
-      if (firstCard.symbol === secondCard.symbol) {
+      if (firstCard.card.suit === secondCard.card.suit && firstCard.card.rank === secondCard.card.rank) {
         // Match found
         setTimeout(() => {
           const updatedGrid = newGrid.map(c => 
@@ -192,7 +210,7 @@ function MemoryGrid({ difficulty, onBack }) {
           className="memory-grid" 
           style={{ 
             gridTemplateColumns: `repeat(${config.size}, 1fr)`,
-            maxWidth: `${config.size * 80}px`
+            maxWidth: `${config.size * 90}px`
           }}
         >
           {grid.map(card => (
@@ -201,8 +219,11 @@ function MemoryGrid({ difficulty, onBack }) {
               className={`memory-card ${card.flipped ? 'flipped' : ''} ${card.matched ? 'matched' : ''}`}
               onClick={() => handleCardClick(card)}
             >
-              <div className="card-front">?</div>
-              <div className="card-back">{card.symbol}</div>
+              <div className="card-front">🂠</div>
+              <div className={`card-back ${card.card.suit === '♥' || card.card.suit === '♦' ? 'red' : ''}`}>
+                <span className="card-rank">{card.card.rank}</span>
+                <span className="card-suit">{card.card.suit}</span>
+              </div>
             </div>
           ))}
         </div>

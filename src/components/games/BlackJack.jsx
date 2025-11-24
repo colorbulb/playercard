@@ -66,18 +66,7 @@ function BlackJack({ onBack }) {
     return value;
   };
 
-  const dealCard = () => {
-    if (deck.length === 0) {
-      initializeDeck();
-      return deck[0];
-    }
-    const card = deck[0];
-    setDeck(deck.slice(1));
-    return card;
-  };
-
   const startGame = () => {
-    initializeDeck();
     const newDeck = [];
     const suits = ['♠', '♥', '♦', '♣'];
     const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
@@ -93,13 +82,13 @@ function BlackJack({ onBack }) {
       [newDeck[i], newDeck[j]] = [newDeck[j], newDeck[i]];
     }
     
-    setDeck(newDeck);
     const player = [newDeck[0], newDeck[2]];
     const dealer = [newDeck[1], newDeck[3]];
+    const remainingDeck = newDeck.slice(4);
     
+    setDeck(remainingDeck);
     setPlayerHand(player);
     setDealerHand(dealer);
-    setDeck(newDeck.slice(4));
     setGameStatus('playing');
     setDealerHidden(true);
     setPlayerScore(calculateHandValue(player));
@@ -109,18 +98,53 @@ function BlackJack({ onBack }) {
   const hit = () => {
     if (gameStatus !== 'playing') return;
     
-    const newCard = dealCard();
-    const newHand = [...playerHand, newCard];
-    setPlayerHand(newHand);
-    
-    const score = calculateHandValue(newHand);
-    setPlayerScore(score);
-    
-    if (score > 21) {
-      setGameStatus('finished');
-      setDealerHidden(false);
-      setDealerScore(calculateHandValue(dealerHand));
-    }
+    setDeck(currentDeck => {
+      let newCard;
+      let remainingDeck;
+      
+      if (currentDeck.length === 0) {
+        // Reshuffle if needed
+        const newDeck = [];
+        const suits = ['♠', '♥', '♦', '♣'];
+        const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+        
+        for (let suit of suits) {
+          for (let rank of ranks) {
+            newDeck.push({ suit, rank, id: `${suit}-${rank}-${Math.random()}` });
+          }
+        }
+        
+        for (let i = newDeck.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [newDeck[i], newDeck[j]] = [newDeck[j], newDeck[i]];
+        }
+        
+        newCard = newDeck[0];
+        remainingDeck = newDeck.slice(1);
+      } else {
+        newCard = currentDeck[0];
+        remainingDeck = currentDeck.slice(1);
+      }
+      
+      setPlayerHand(currentPlayerHand => {
+        const newHand = [...currentPlayerHand, newCard];
+        const score = calculateHandValue(newHand);
+        setPlayerScore(score);
+        
+        if (score > 21) {
+          setGameStatus('finished');
+          setDealerHidden(false);
+          setDealerHand(currentDealerHand => {
+            setDealerScore(calculateHandValue(currentDealerHand));
+            return currentDealerHand;
+          });
+        }
+        
+        return newHand;
+      });
+      
+      return remainingDeck;
+    });
   };
 
   const stand = () => {
@@ -128,35 +152,47 @@ function BlackJack({ onBack }) {
     
     setGameStatus('dealer');
     setDealerHidden(false);
-    let currentDealerHand = [...dealerHand];
-    let currentDealerScore = calculateHandValue(currentDealerHand);
     
-    // Dealer draws until 17 or higher
+    let currentDealerHand = [...dealerHand];
+    
     const dealerPlay = () => {
-      if (currentDealerScore < 17 && deck.length > 0) {
-        const newCard = dealCard();
-        currentDealerHand = [...currentDealerHand, newCard];
-        currentDealerScore = calculateHandValue(currentDealerHand);
-        setDealerHand(currentDealerHand);
-        setDealerScore(currentDealerScore);
-        
-        if (currentDealerScore < 17) {
-          setTimeout(dealerPlay, 500);
-        } else {
-          finishGame();
-        }
+      const currentDealerScore = calculateHandValue(currentDealerHand);
+      
+      if (currentDealerScore < 17) {
+        setDeck(currentDeck => {
+          if (currentDeck.length === 0) {
+            finishGame(currentDealerHand);
+            return currentDeck;
+          }
+          
+          const newCard = currentDeck[0];
+          currentDealerHand = [...currentDealerHand, newCard];
+          const newScore = calculateHandValue(currentDealerHand);
+          setDealerHand(currentDealerHand);
+          setDealerScore(newScore);
+          
+          if (newScore < 17) {
+            setTimeout(dealerPlay, 500);
+          } else {
+            setTimeout(() => finishGame(currentDealerHand), 100);
+          }
+          
+          return currentDeck.slice(1);
+        });
       } else {
-        finishGame();
+        finishGame(currentDealerHand);
       }
     };
     
     setTimeout(dealerPlay, 500);
   };
 
-  const finishGame = () => {
+  const finishGame = (finalDealerHand) => {
+    setDealerHand(finalDealerHand);
     setGameStatus('finished');
+    
     const finalPlayerScore = calculateHandValue(playerHand);
-    const finalDealerScore = calculateHandValue(dealerHand);
+    const finalDealerScore = calculateHandValue(finalDealerHand);
     
     setPlayerScore(finalPlayerScore);
     setDealerScore(finalDealerScore);
