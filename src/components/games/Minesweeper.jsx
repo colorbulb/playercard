@@ -114,7 +114,8 @@ function Minesweeper({ onBack }) {
   };
 
   const revealCell = (row, col) => {
-    if (gameStatus !== 'playing' || revealed[row][col] || flagged[row][col] || loading) return;
+    if (gameStatus !== 'playing' || loading || !grid || !grid[row] || !revealed || !revealed[row] || !flagged || !flagged[row]) return;
+    if (revealed[row][col] || flagged[row][col]) return;
     
     const newRevealed = revealed.map(r => [...r]);
     
@@ -127,7 +128,8 @@ function Minesweeper({ onBack }) {
     }
     
     const reveal = (r, c) => {
-      if (r < 0 || r >= rows || c < 0 || c >= cols || newRevealed[r][c] || flagged[r][c]) return;
+      if (r < 0 || r >= rows || c < 0 || c >= cols || newRevealed[r][c]) return;
+      if (flagged && flagged[r] && flagged[r][c]) return;
       
       newRevealed[r][c] = true;
       
@@ -161,7 +163,8 @@ function Minesweeper({ onBack }) {
 
   const toggleFlag = (row, col, e) => {
     e.preventDefault();
-    if (gameStatus !== 'playing' || revealed[row][col] || loading) return;
+    if (gameStatus !== 'playing' || loading || !revealed || !revealed[row] || !flagged || !flagged[row]) return;
+    if (revealed[row][col]) return;
     
     const newFlagged = flagged.map(r => [...r]);
     newFlagged[row][col] = !newFlagged[row][col];
@@ -192,13 +195,17 @@ function Minesweeper({ onBack }) {
   };
 
   const getRemainingFlags = () => {
+    if (!flagged || flagged.length === 0 || !flagged[0]) {
+      return mineCount;
+    }
     let flaggedCount = 0;
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
+    for (let r = 0; r < rows && r < flagged.length; r++) {
+      if (!flagged[r]) continue;
+      for (let c = 0; c < cols && c < flagged[r].length; c++) {
         if (flagged[r][c]) flaggedCount++;
       }
     }
-    return mineCount - flaggedCount;
+    return Math.max(0, mineCount - flaggedCount);
   };
 
   return (
