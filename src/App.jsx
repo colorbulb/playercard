@@ -5,6 +5,10 @@ import BlackJack from './components/games/BlackJack';
 import MemoryGrid from './components/games/MemoryGrid';
 import MemoryGridIcons from './components/games/MemoryGridIcons';
 import ColorBalls from './components/games/ColorBalls';
+import Sudoku from './components/games/Sudoku';
+import Takuzu from './components/games/Takuzu';
+import Set from './components/games/Set';
+import Minesweeper from './components/games/Minesweeper';
 import './App.css';
 
 function App() {
@@ -35,6 +39,14 @@ function App() {
         <MemoryGridIcons difficulty={difficulty} onBack={handleBackToMenu} />
       ) : currentGame === 'colorballs' ? (
         <ColorBalls onBack={handleBackToMenu} />
+      ) : currentGame === 'sudoku' ? (
+        <Sudoku onBack={handleBackToMenu} />
+      ) : currentGame === 'takuzu' ? (
+        <Takuzu onBack={handleBackToMenu} />
+      ) : currentGame === 'set' ? (
+        <Set onBack={handleBackToMenu} />
+      ) : currentGame === 'minesweeper' ? (
+        <Minesweeper onBack={handleBackToMenu} />
       ) : null}
     </div>
   );

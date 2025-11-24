@@ -1,6 +1,7 @@
-.sudoku-game {
+.takuzu-game {
+  width: 100%;
+  max-width: 1200px;
   padding: 20px;
-  min-height: 100vh;
 }
 
 .back-button, .rules-button {
@@ -34,14 +35,14 @@
   transform: scale(1.05);
 }
 
-.sudoku-container {
+.takuzu-container {
   background: white;
   border-radius: 20px;
   padding: 30px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-.sudoku-header {
+.takuzu-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -50,7 +51,7 @@
   gap: 15px;
 }
 
-.sudoku-header h1 {
+.takuzu-header h1 {
   color: #667eea;
   font-size: 2.5rem;
 }
@@ -61,7 +62,7 @@
   align-items: center;
 }
 
-.difficulty-select {
+.size-select {
   padding: 10px;
   border: 2px solid #667eea;
   border-radius: 8px;
@@ -191,79 +192,81 @@
   margin-left: 10px;
 }
 
-.sudoku-grid-container {
+.takuzu-grid-container {
   display: flex;
   justify-content: center;
   margin-bottom: 30px;
+  overflow-x: auto;
 }
 
-.sudoku-grid {
-  display: inline-block;
+.takuzu-grid {
+  display: grid;
+  gap: 2px;
+  background: #333;
   border: 3px solid #333;
+  padding: 2px;
 }
 
-.sudoku-row {
-  display: flex;
-}
-
-.sudoku-cell {
+.takuzu-cell {
   width: 50px;
   height: 50px;
-  border: 1px solid #ccc;
+  background: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
   font-weight: bold;
   cursor: pointer;
-  background: white;
   transition: all 0.2s;
+  color: #333;
 }
 
-.sudoku-cell.border-bottom {
-  border-bottom: 3px solid #333;
-}
-
-.sudoku-cell.border-right {
-  border-right: 3px solid #333;
-}
-
-.sudoku-cell:hover {
+.takuzu-cell:hover {
   background: #e3f2fd;
 }
 
-.sudoku-cell.selected {
+.takuzu-cell.selected {
   background: #bbdefb;
   border: 2px solid #667eea;
 }
 
-.sudoku-cell.original {
+.takuzu-cell.original {
   background: #f5f5f5;
   color: #333;
   font-weight: bold;
 }
 
-.sudoku-cell.wrong {
-  background: #ffebee;
-  color: #c62828;
-}
-
-.number-pad {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
+.value-pad {
+  display: flex;
   gap: 10px;
-  max-width: 400px;
-  margin: 0 auto;
+  justify-content: center;
+  margin-bottom: 30px;
 }
 
-.number-btn {
-  min-height: 50px;
-  font-size: 1.2rem;
+.value-btn {
+  padding: 15px 30px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.5rem;
   font-weight: bold;
+  transition: all 0.3s;
+  min-width: 100px;
+}
+
+.value-btn:hover {
+  background: #5568d3;
+  transform: scale(1.05);
 }
 
 .clear-btn {
-  grid-column: span 2;
+  background: #dc3545;
+}
+
+.clear-btn:hover {
+  background: #c82333;
 }
 
 .high-scores {
@@ -309,7 +312,7 @@
 }
 
 @media (max-width: 768px) {
-  .sudoku-cell {
+  .takuzu-cell {
     width: 35px;
     height: 35px;
     font-size: 1.2rem;

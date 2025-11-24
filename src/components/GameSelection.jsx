@@ -52,6 +52,30 @@ function GameSelection({ onGameSelect }) {
             <h2>Color Balls</h2>
             <p>Tap matching colors!</p>
           </div>
+          
+          <div className="game-card" onClick={() => onGameSelect('sudoku')}>
+            <div className="game-icon">🔢</div>
+            <h2>Sudoku</h2>
+            <p>Number puzzle</p>
+          </div>
+          
+          <div className="game-card" onClick={() => onGameSelect('takuzu')}>
+            <div className="game-icon">⚫⚪</div>
+            <h2>Takuzu</h2>
+            <p>Binary puzzle</p>
+          </div>
+          
+          <div className="game-card" onClick={() => onGameSelect('set')}>
+            <div className="game-icon">🎴</div>
+            <h2>Set</h2>
+            <p>Card matching game</p>
+          </div>
+          
+          <div className="game-card" onClick={() => onGameSelect('minesweeper')}>
+            <div className="game-icon">💣</div>
+            <h2>Minesweeper</h2>
+            <p>Clear the minefield</p>
+          </div>
         </div>
       ) : showMemoryOptions ? (
         <div className="memory-options-selection">

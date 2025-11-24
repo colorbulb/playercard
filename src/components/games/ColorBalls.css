@@ -1,175 +1,11 @@
 .color-balls-game {
-  width: 100%;
-  max-width: 100vw;
   padding: 20px;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.back-button {
-  background: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-  margin-bottom: 20px;
-  transition: all 0.3s ease;
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  z-index: 100;
-}
-
-.back-button:hover {
-  background: #f0f0f0;
-  transform: scale(1.05);
-}
-
-.color-balls-container {
-  background: white;
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  max-width: 1200px;
-}
-
-.game-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  flex-wrap: wrap;
-  gap: 15px;
-}
-
-.game-header h1 {
-  color: #667eea;
-  font-size: 2.5rem;
-}
-
-.game-info {
-  display: flex;
-  gap: 20px;
-}
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 10px 15px;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
-.info-label {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 5px;
-}
-
-.info-value {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #667eea;
-}
-
-.new-game-btn {
-  background: #667eea;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.new-game-btn:hover:not(:disabled) {
-  background: #5568d3;
-}
-
-.new-game-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.score-modal {
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.score-modal h2 {
-  color: #667eea;
-  margin-bottom: 10px;
-}
-
-.name-input {
-  padding: 10px;
-  margin: 10px;
-  border: 2px solid #667eea;
-  border-radius: 5px;
-  font-size: 1rem;
-  width: 200px;
-}
-
-.save-score-btn {
-  background: #667eea;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-  margin-left: 10px;
-}
-
-.target-colors-section {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-  margin-bottom: 30px;
-}
-
-.target-colors-left,
-.target-colors-right {
-  flex: 0 0 150px;
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-}
-
-.target-colors-left h3,
-.target-colors-right h3 {
-  color: #667eea;
-  margin-bottom: 15px;
-  font-size: 1.2rem;
-}
-
-.target-colors-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.target-color-item {
-  font-size: 3rem;
-  padding: 10px;
-  background: white;
-  border-radius: 8px;
-  border: 3px solid #667eea;
 }
 
 .game-area-container {
-  flex: 1;
-  min-height: 500px;
   position: relative;
+  min-height: 500px;
   background: linear-gradient(to bottom, #e3f2fd 0%, #bbdefb 100%);
   border-radius: 10px;
   overflow: hidden;
@@ -180,6 +16,7 @@
   width: 100%;
   height: 100%;
   position: relative;
+  min-height: 500px;
 }
 
 .ball {
@@ -201,9 +38,9 @@
 }
 
 .ball.target {
-  border: 3px solid #28a745;
-  background: rgba(40, 167, 69, 0.2);
-  box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+  /* Removed green border - no special styling for target balls */
+  border: 3px solid #6c757d;
+  background: rgba(108, 117, 125, 0.1);
 }
 
 .ball.non-target {
@@ -212,67 +49,48 @@
   opacity: 0.7;
 }
 
-.high-scores {
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 10px;
-}
-
-.high-scores h3 {
-  color: #667eea;
-  margin-bottom: 15px;
+.target-item-display {
+  padding: 10px;
+  background: white;
+  border-radius: 8px;
+  border: 2px solid #667eea;
   text-align: center;
+  min-width: 60px;
 }
 
-.scores-list {
+.target-items-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
+.scores-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
 .score-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  background: white;
-  border-radius: 5px;
+  transition: background-color 0.2s;
 }
 
-.score-item .rank {
-  font-weight: bold;
-  color: #667eea;
-}
-
-.score-item .name {
-  flex: 1;
-  margin-left: 15px;
-}
-
-.score-item .score {
-  font-weight: bold;
-  color: #333;
+.score-item:hover {
+  background-color: #e9ecef !important;
 }
 
 @media (max-width: 768px) {
-  .target-colors-section {
-    flex-direction: column;
+  .game-area-container {
+    min-height: 400px;
   }
-
-  .target-colors-left,
-  .target-colors-right {
-    flex: 1;
-    width: 100%;
+  
+  .ball {
+    width: 40px;
+    height: 40px;
+    font-size: 2rem;
   }
-
-  .target-colors-list {
+  
+  .target-items-list {
     flex-direction: row;
     justify-content: center;
     flex-wrap: wrap;
   }
-
-  .game-area-container {
-    min-height: 400px;
-  }
 }
-
