@@ -26,7 +26,7 @@ function GameSelection({ onGameSelect }) {
     <Container fluid className="game-selection">
       <Row className="mb-4">
         <Col className="text-center">
-          <img src={logo} width="100px" alt="Logo" className="mb-3" />
+          <img src={logo} width="300px" alt="Logo" className="mb-3" />
           <h1 className="game-selection-title">NextElite Game Collection</h1>
           <p className="game-selection-subtitle">Choose a game to play</p>
         </Col>
