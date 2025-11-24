@@ -1,16 +1,22 @@
 import { database } from './config';
 import { ref, push, get, query, orderByChild, limitToLast } from 'firebase/database';
 
-export const saveScore = async (gameName, difficulty, score, playerName = 'Anonymous') => {
+export const saveScore = async (gameName, difficulty, score, playerName = 'Anonymous', time = null, moves = null) => {
   try {
     const scoresRef = ref(database, 'scores');
-    await push(scoresRef, {
+    const scoreData = {
       gameName,
       difficulty: difficulty || 'N/A',
       score,
       playerName,
       timestamp: Date.now()
-    });
+    };
+    
+    // Add time and moves if provided
+    if (time !== null) scoreData.time = time;
+    if (moves !== null) scoreData.moves = moves;
+    
+    await push(scoresRef, scoreData);
     return true;
   } catch (error) {
     console.error('Error saving score:', error);

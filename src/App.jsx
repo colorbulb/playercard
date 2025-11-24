@@ -4,6 +4,7 @@ import Big2 from './components/games/Big2';
 import BlackJack from './components/games/BlackJack';
 import MemoryGrid from './components/games/MemoryGrid';
 import MemoryGridIcons from './components/games/MemoryGridIcons';
+import ColorBalls from './components/games/ColorBalls';
 import './App.css';
 
 function App() {
@@ -32,6 +33,8 @@ function App() {
         <MemoryGrid difficulty={difficulty} onBack={handleBackToMenu} />
       ) : currentGame === 'memory-icons' ? (
         <MemoryGridIcons difficulty={difficulty} onBack={handleBackToMenu} />
+      ) : currentGame === 'colorballs' ? (
+        <ColorBalls onBack={handleBackToMenu} />
       ) : null}
     </div>
   );

@@ -13,6 +13,8 @@ function MemoryGridIcons({ difficulty, onBack }) {
   const [showNameInput, setShowNameInput] = useState(false);
   const [highScores, setHighScores] = useState([]);
   const [canFlip, setCanFlip] = useState(true);
+  const [highestScore, setHighestScore] = useState(null);
+  const [timeRemaining, setTimeRemaining] = useState(null);
 
   const difficultyConfig = {
     easy: { size: 4, pairs: 8 },
@@ -33,11 +35,19 @@ function MemoryGridIcons({ difficulty, onBack }) {
     let interval = null;
     if (gameStatus === 'playing') {
       interval = setInterval(() => {
-        setTime(time => time + 1);
+        setTime(time => {
+          const newTime = time + 1;
+          if (highestScore && highestScore.time) {
+            const remaining = highestScore.time - newTime;
+            // Freeze at 0 once passed the record time
+            setTimeRemaining(remaining >= 0 ? remaining : 0);
+          }
+          return newTime;
+        });
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [gameStatus]);
+  }, [gameStatus, highestScore]);
 
   const lockOrientation = () => {
     // Try to lock orientation to landscape
@@ -151,15 +161,39 @@ function MemoryGridIcons({ difficulty, onBack }) {
   const loadHighScores = async () => {
     const scores = await getHighScores('Memory Grid Icons', difficulty);
     setHighScores(scores);
+    
+    if (scores.length > 0) {
+      const bestScore = scores.reduce((best, current) => {
+        const currentTime = current.time || Infinity;
+        const bestTime = best.time || Infinity;
+        return currentTime < bestTime ? current : best;
+      }, scores[0]);
+      
+      setHighestScore(bestScore);
+      if (bestScore.time) {
+        setTimeRemaining(bestScore.time);
+      } else {
+        setTimeRemaining(null);
+      }
+    } else {
+      setHighestScore(null);
+      setTimeRemaining(null);
+    }
   };
 
   const handleSaveScore = async () => {
     if (!playerName.trim()) return;
-    // Score based on time and moves (lower is better, so we invert)
     const score = Math.max(0, 10000 - (time * 10) - (moves * 50));
-    await saveScore('Memory Grid Icons', difficulty, score, playerName);
-    setShowNameInput(false);
-    loadHighScores();
+    const success = await saveScore('Memory Grid Icons', difficulty, score, playerName, time, moves);
+    if (success) {
+      setShowNameInput(false);
+      await loadHighScores();
+      if (!highestScore || (highestScore.time && time < highestScore.time)) {
+        alert('🎉 New Record! You beat the previous best time!');
+      }
+    } else {
+      alert('Failed to save score. Please check your connection and try again.');
+    }
   };
 
   const formatTime = (seconds) => {
@@ -191,7 +225,37 @@ function MemoryGridIcons({ difficulty, onBack }) {
             <span className="stat-label">Pairs Found:</span>
             <span className="stat-value">{matchedPairs.length / 2} / {config.pairs}</span>
           </div>
+          {highestScore && highestScore.time && (
+            <div className="stat">
+              <span className="stat-label">Best Time:</span>
+              <span className="stat-value">{formatTime(highestScore.time)}</span>
+            </div>
+          )}
         </div>
+        
+        {timeRemaining !== null && highestScore && highestScore.time && gameStatus === 'playing' && (
+          <div className="countdown-timer">
+            <div className="countdown-label">Time to beat record:</div>
+            <div className="countdown-bar-container">
+              <div 
+                className="countdown-bar" 
+                style={{ 
+                  width: `${Math.max(0, Math.min(100, (timeRemaining / highestScore.time) * 100))}%`,
+                  backgroundColor: timeRemaining > highestScore.time * 0.5 ? '#28a745' : timeRemaining > highestScore.time * 0.25 ? '#ffc107' : '#dc3545'
+                }}
+              />
+            </div>
+            <div className="countdown-time">
+              {timeRemaining > 0 ? formatTime(timeRemaining) : '0:00 (Record beaten!)'}
+            </div>
+          </div>
+        )}
+        
+        {timeRemaining !== null && timeRemaining === 0 && time > highestScore.time && gameStatus === 'playing' && (
+          <div className="record-beaten">
+            🎉 You beat the record! Keep going!
+          </div>
+        )}
 
         {gameStatus === 'won' && showNameInput && (
           <div className="score-modal">

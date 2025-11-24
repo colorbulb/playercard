@@ -46,6 +46,12 @@ function GameSelection({ onGameSelect }) {
             <h2>Memory Grid</h2>
             <p>Test your memory</p>
           </div>
+          
+          <div className="game-card" onClick={() => onGameSelect('colorballs')}>
+            <div className="game-icon">🎨</div>
+            <h2>Color Balls</h2>
+            <p>Tap matching colors!</p>
+          </div>
         </div>
       ) : showMemoryOptions ? (
         <div className="memory-options-selection">
