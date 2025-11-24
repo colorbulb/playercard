@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Container, Row, Col, Button, Card, CardBody, CardTitle, CardText } from 'reactstrap';
 import './GameSelection.css';
 import logo from '/logo.png';
 
@@ -22,118 +23,176 @@ function GameSelection({ onGameSelect }) {
   };
 
   return (
-    <div className="game-selection">
-      <img src={logo} width="100px" alt="Logo" />
-      <h1 className="game-selection-title">NextElite Game Collection</h1>
-      <p className="game-selection-subtitle">Choose a game to play</p>
+    <Container fluid className="game-selection">
+      <Row className="mb-4">
+        <Col className="text-center">
+          <img src={logo} width="100px" alt="Logo" className="mb-3" />
+          <h1 className="game-selection-title">NextElite Game Collection</h1>
+          <p className="game-selection-subtitle">Choose a game to play</p>
+        </Col>
+      </Row>
       
       {!showMemoryOptions && !showMemoryDifficulty ? (
-        <div className="game-grid">
-          <div className="game-card" onClick={() => onGameSelect('big2')}>
-            <div className="game-icon">🃏</div>
-            <h2>Big 2</h2>
-            <p>Classic card game</p>
-          </div>
+        <Row className="g-3">
+          <Col md={6} lg={4} xl={3}>
+            <Card className="game-card h-100" onClick={() => onGameSelect('big2')}>
+              <CardBody className="text-center">
+                <div className="game-icon">🃏</div>
+                <CardTitle tag="h2">Big 2</CardTitle>
+                <CardText>Classic card game</CardText>
+              </CardBody>
+            </Card>
+          </Col>
           
-          <div className="game-card" onClick={() => onGameSelect('blackjack')}>
-            <div className="game-icon">🎰</div>
-            <h2>Black Jack</h2>
-            <p>Beat the dealer!</p>
-          </div>
+          <Col md={6} lg={4} xl={3}>
+            <Card className="game-card h-100" onClick={() => onGameSelect('blackjack')}>
+              <CardBody className="text-center">
+                <div className="game-icon">🎰</div>
+                <CardTitle tag="h2">Black Jack</CardTitle>
+                <CardText>Beat the dealer!</CardText>
+              </CardBody>
+            </Card>
+          </Col>
           
-          <div className="game-card" onClick={handleMemoryClick}>
-            <div className="game-icon">🧠</div>
-            <h2>Memory Grid</h2>
-            <p>Test your memory</p>
-          </div>
+          <Col md={6} lg={4} xl={3}>
+            <Card className="game-card h-100" onClick={handleMemoryClick}>
+              <CardBody className="text-center">
+                <div className="game-icon">🧠</div>
+                <CardTitle tag="h2">Memory Grid</CardTitle>
+                <CardText>Test your memory</CardText>
+              </CardBody>
+            </Card>
+          </Col>
           
-          <div className="game-card" onClick={() => onGameSelect('colorballs')}>
-            <div className="game-icon">🎨</div>
-            <h2>Color Balls</h2>
-            <p>Tap matching colors!</p>
-          </div>
+          <Col md={6} lg={4} xl={3}>
+            <Card className="game-card h-100" onClick={() => onGameSelect('colorballs')}>
+              <CardBody className="text-center">
+                <div className="game-icon">🎨</div>
+                <CardTitle tag="h2">Color Balls</CardTitle>
+                <CardText>Tap matching colors!</CardText>
+              </CardBody>
+            </Card>
+          </Col>
           
-          <div className="game-card" onClick={() => onGameSelect('sudoku')}>
-            <div className="game-icon">🔢</div>
-            <h2>Sudoku</h2>
-            <p>Number puzzle</p>
-          </div>
+          <Col md={6} lg={4} xl={3}>
+            <Card className="game-card h-100" onClick={() => onGameSelect('sudoku')}>
+              <CardBody className="text-center">
+                <div className="game-icon">🔢</div>
+                <CardTitle tag="h2">Sudoku</CardTitle>
+                <CardText>Number puzzle</CardText>
+              </CardBody>
+            </Card>
+          </Col>
           
-          <div className="game-card" onClick={() => onGameSelect('takuzu')}>
-            <div className="game-icon">⚫⚪</div>
-            <h2>Takuzu</h2>
-            <p>Binary puzzle</p>
-          </div>
+          <Col md={6} lg={4} xl={3}>
+            <Card className="game-card h-100" onClick={() => onGameSelect('takuzu')}>
+              <CardBody className="text-center">
+                <div className="game-icon">⚫⚪</div>
+                <CardTitle tag="h2">Takuzu</CardTitle>
+                <CardText>Binary puzzle</CardText>
+              </CardBody>
+            </Card>
+          </Col>
           
-          <div className="game-card" onClick={() => onGameSelect('set')}>
-            <div className="game-icon">🎴</div>
-            <h2>Set</h2>
-            <p>Card matching game</p>
-          </div>
+          <Col md={6} lg={4} xl={3}>
+            <Card className="game-card h-100" onClick={() => onGameSelect('set')}>
+              <CardBody className="text-center">
+                <div className="game-icon">🎴</div>
+                <CardTitle tag="h2">Set</CardTitle>
+                <CardText>Card matching game</CardText>
+              </CardBody>
+            </Card>
+          </Col>
           
-          <div className="game-card" onClick={() => onGameSelect('minesweeper')}>
-            <div className="game-icon">💣</div>
-            <h2>Minesweeper</h2>
-            <p>Clear the minefield</p>
-          </div>
-        </div>
+          <Col md={6} lg={4} xl={3}>
+            <Card className="game-card h-100" onClick={() => onGameSelect('minesweeper')}>
+              <CardBody className="text-center">
+                <div className="game-icon">💣</div>
+                <CardTitle tag="h2">Minesweeper</CardTitle>
+                <CardText>Clear the minefield</CardText>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
       ) : showMemoryOptions ? (
-        <div className="memory-options-selection">
-          <h2>Choose Memory Game Type</h2>
-          <div className="memory-options-grid">
-            <div className="game-card" onClick={() => handleMemoryTypeSelect('memory')}>
-              <div className="game-icon">🃏</div>
-              <h2>Memory Grid (Cards)</h2>
-              <p>Match poker cards</p>
-            </div>
-            <div className="game-card" onClick={() => handleMemoryTypeSelect('memory-icons')}>
-              <div className="game-icon">🎯</div>
-              <h2>Memory Grid (Icons)</h2>
-              <p>Match emoji icons - Landscape mode</p>
-            </div>
-          </div>
-          <button 
-            className="back-btn" 
-            onClick={() => setShowMemoryOptions(false)}
-          >
-            Back
-          </button>
-        </div>
+        <Row className="justify-content-center">
+          <Col md={8}>
+            <Card>
+              <CardBody>
+                <CardTitle tag="h2" className="text-center mb-4">Choose Memory Game Type</CardTitle>
+                <Row className="g-3">
+                  <Col md={6}>
+                    <Card className="game-card h-100" onClick={() => handleMemoryTypeSelect('memory')}>
+                      <CardBody className="text-center">
+                        <div className="game-icon">🃏</div>
+                        <CardTitle tag="h2">Memory Grid (Cards)</CardTitle>
+                        <CardText>Match poker cards</CardText>
+                      </CardBody>
+                    </Card>
+                  </Col>
+                  <Col md={6}>
+                    <Card className="game-card h-100" onClick={() => handleMemoryTypeSelect('memory-icons')}>
+                      <CardBody className="text-center">
+                        <div className="game-icon">🎯</div>
+                        <CardTitle tag="h2">Memory Grid (Icons)</CardTitle>
+                        <CardText>Match emoji icons - Landscape mode</CardText>
+                      </CardBody>
+                    </Card>
+                  </Col>
+                </Row>
+                <div className="text-center mt-4">
+                  <Button color="secondary" onClick={() => setShowMemoryOptions(false)}>Back</Button>
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
       ) : (
-        <div className="difficulty-selection">
-          <h2>Select Difficulty</h2>
-          <div className="difficulty-grid">
-            <button 
-              className="difficulty-btn easy" 
-              onClick={() => handleDifficultySelect('easy')}
-            >
-              Easy
-            </button>
-            <button 
-              className="difficulty-btn medium" 
-              onClick={() => handleDifficultySelect('medium')}
-            >
-              Medium
-            </button>
-            <button 
-              className="difficulty-btn expert" 
-              onClick={() => handleDifficultySelect('expert')}
-            >
-              Expert
-            </button>
-          </div>
-          <button 
-            className="back-btn" 
-            onClick={() => {
-              setShowMemoryDifficulty(false);
-              setSelectedMemoryType(null);
-            }}
-          >
-            Back
-          </button>
-        </div>
+        <Row className="justify-content-center">
+          <Col md={6}>
+            <Card>
+              <CardBody>
+                <CardTitle tag="h2" className="text-center mb-4">Select Difficulty</CardTitle>
+                <div className="d-grid gap-3">
+                  <Button 
+                    color="success" 
+                    size="lg"
+                    onClick={() => handleDifficultySelect('easy')}
+                  >
+                    Easy
+                  </Button>
+                  <Button 
+                    color="warning" 
+                    size="lg"
+                    onClick={() => handleDifficultySelect('medium')}
+                  >
+                    Medium
+                  </Button>
+                  <Button 
+                    color="danger" 
+                    size="lg"
+                    onClick={() => handleDifficultySelect('expert')}
+                  >
+                    Expert
+                  </Button>
+                </div>
+                <div className="text-center mt-4">
+                  <Button 
+                    color="secondary" 
+                    onClick={() => {
+                      setShowMemoryDifficulty(false);
+                      setSelectedMemoryType(null);
+                    }}
+                  >
+                    Back
+                  </Button>
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
       )}
-    </div>
+    </Container>
   );
 }
 

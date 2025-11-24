@@ -16,6 +16,8 @@ function Sudoku({ onBack }) {
   const [highScores, setHighScores] = useState([]);
   const [showRules, setShowRules] = useState(false);
   const [difficulty, setDifficulty] = useState(30); // fill percentage
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     loadNewGame();
@@ -33,17 +35,30 @@ function Sudoku({ onBack }) {
   }, [gameStatus]);
 
   const loadNewGame = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const response = await fetch(`${API_BASE}/sudoku/generator?fill=${difficulty}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
+      if (!data.task || !data.grid) {
+        throw new Error('Invalid response from API');
+      }
       setGrid(data.task.map(row => [...row]));
       setSolution(data.grid);
       setGameStatus('playing');
       setTime(0);
       setSelectedCell(null);
+      setLoading(false);
     } catch (error) {
       console.error('Error loading Sudoku:', error);
-      alert('Failed to load new game. Please try again.');
+      setError(`Failed to load game: ${error.message}. Please check your connection and try again.`);
+      setLoading(false);
+      // Initialize with empty grid to prevent blank screen
+      setGrid(Array(9).fill(null).map(() => Array(9).fill(0)));
+      setSolution(Array(9).fill(null).map(() => Array(9).fill(0)));
     }
   };
 
@@ -81,6 +96,11 @@ function Sudoku({ onBack }) {
     } catch (error) {
       console.error('Error checking solution:', error);
     }
+  };
+
+  const loadHighScores = async () => {
+    const scores = await getHighScores('Sudoku', difficulty.toString());
+    setHighScores(scores);
   };
 
   const handleSaveScore = async () => {
@@ -159,6 +179,23 @@ function Sudoku({ onBack }) {
               </ModalFooter>
             </Modal>
 
+            {error && (
+              <Card className="mb-3 border-danger">
+                <CardBody className="text-center">
+                  <CardText className="text-danger">{error}</CardText>
+                  <Button color="primary" onClick={loadNewGame}>Retry</Button>
+                </CardBody>
+              </Card>
+            )}
+
+            {loading && (
+              <Card className="mb-3">
+                <CardBody className="text-center">
+                  <CardText>Loading puzzle...</CardText>
+                </CardBody>
+              </Card>
+            )}
+
             <Row className="mb-3">
               <Col className="text-center">
                 <div className="d-inline-block p-3 bg-light rounded">
@@ -187,10 +224,11 @@ function Sudoku({ onBack }) {
               </Card>
             )}
 
-            <Row className="justify-content-center mb-4">
-              <Col xs="auto">
-                <div className="sudoku-grid">
-                  {grid.map((row, rowIndex) => (
+            {!loading && grid.length > 0 && (
+              <Row className="justify-content-center mb-4">
+                <Col xs="auto">
+                  <div className="sudoku-grid">
+                    {grid.map((row, rowIndex) => (
                     <div key={rowIndex} className="sudoku-row">
                       {row.map((cell, colIndex) => {
                         const isSelected = selectedCell?.row === rowIndex && selectedCell?.col === colIndex;
@@ -209,13 +247,15 @@ function Sudoku({ onBack }) {
                       })}
                     </div>
                   ))}
-                </div>
-              </Col>
-            </Row>
+                  </div>
+                </Col>
+              </Row>
+            )}
 
-            <Row className="justify-content-center mb-4">
-              <Col md={8}>
-                <div className="number-pad">
+            {!loading && (
+              <Row className="justify-content-center mb-4">
+                <Col md={8}>
+                  <div className="number-pad">
                   {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
                     <Button
                       key={num}
@@ -229,9 +269,10 @@ function Sudoku({ onBack }) {
                   <Button color="danger" className="number-btn clear-btn" onClick={() => handleNumberInput(0)}>
                     Clear
                   </Button>
-                </div>
-              </Col>
-            </Row>
+                  </div>
+                </Col>
+              </Row>
+            )}
 
             <Card>
               <CardBody>

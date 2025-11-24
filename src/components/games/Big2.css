@@ -97,7 +97,9 @@
   min-height: 100px;
 }
 
-.card {
+/* Playing card styles - scoped to avoid Bootstrap conflicts */
+.big2-game .card,
+.big2-game .cards-display .card {
   width: 60px;
   height: 90px;
   background: white;
@@ -112,28 +114,58 @@
   font-weight: bold;
 }
 
-.card:hover {
+.big2-game .card:hover,
+.big2-game .cards-display .card:hover {
   transform: translateY(-5px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-.card.selected {
+.big2-game .card.selected,
+.big2-game .cards-display .card.selected {
   border-color: #667eea;
   background: #e0e7ff;
   transform: translateY(-10px);
 }
 
-.card .rank {
+.big2-game .card .rank,
+.big2-game .cards-display .card .rank {
   font-size: 1.2rem;
 }
 
-.card .suit {
+.big2-game .card .suit,
+.big2-game .cards-display .card .suit {
   font-size: 1.5rem;
   text-align: center;
 }
 
-.card .rank.red, .card .suit.red {
+.big2-game .card .rank.red,
+.big2-game .card .suit.red,
+.big2-game .cards-display .card .rank.red,
+.big2-game .cards-display .card .suit.red {
   color: red;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .big2-game {
+    padding: 15px;
+  }
+
+  .big2-game .card,
+  .big2-game .cards-display .card {
+    width: 50px;
+    height: 75px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .big2-game .card,
+  .big2-game .cards-display .card {
+    width: 45px;
+    height: 68px;
+    font-size: 0.8rem;
+  }
 }
 
 .game-actions {

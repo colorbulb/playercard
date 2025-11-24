@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Container, Row, Col, Button, Card, CardBody, CardTitle, CardText, Input } from 'reactstrap';
 import { saveScore, getHighScores } from '../../firebase/scores';
 import './BlackJack.css';
 
@@ -225,110 +226,142 @@ function BlackJack({ onBack }) {
   };
 
   return (
-    <div className="blackjack-game">
-      <button className="back-button" onClick={onBack}>← Back to Menu</button>
+    <Container fluid className="blackjack-game">
+      <Row className="mb-3">
+        <Col>
+          <Button color="secondary" onClick={onBack}>← Back to Menu</Button>
+        </Col>
+      </Row>
       
-      <div className="blackjack-container">
-        <div className="blackjack-header">
-          <h1>Black Jack</h1>
-          <button onClick={startGame} className="new-game-btn" disabled={gameStatus === 'playing' || gameStatus === 'dealer'}>
-            New Game
-          </button>
-        </div>
+      <Container>
+        <Card>
+          <CardBody>
+            <Row className="align-items-center mb-3">
+              <Col md={6}>
+                <CardTitle tag="h1">Black Jack</CardTitle>
+              </Col>
+              <Col md={6} className="text-md-end">
+                <Button 
+                  color="primary" 
+                  onClick={startGame} 
+                  disabled={gameStatus === 'playing' || gameStatus === 'dealer'}
+                >
+                  New Game
+                </Button>
+              </Col>
+            </Row>
 
-        {gameStatus === 'finished' && showNameInput && (
-          <div className="score-modal">
-            <h2>{getGameResult()}</h2>
-            {playerScore <= 21 && (dealerScore > 21 || playerScore > dealerScore) && (
-              <>
-                <input
-                  type="text"
-                  placeholder="Enter your name"
-                  value={playerName}
-                  onChange={(e) => setPlayerName(e.target.value)}
-                  className="name-input"
-                />
-                <button onClick={handleSaveScore} className="save-score-btn">Save Score</button>
-              </>
+            {gameStatus === 'finished' && showNameInput && (
+              <Card className="mb-3 bg-light">
+                <CardBody className="text-center">
+                  <CardTitle tag="h2">{getGameResult()}</CardTitle>
+                  {playerScore <= 21 && (dealerScore > 21 || playerScore > dealerScore) && (
+                    <div className="d-flex gap-2 justify-content-center flex-wrap mt-3">
+                      <Input
+                        type="text"
+                        placeholder="Enter your name"
+                        value={playerName}
+                        onChange={(e) => setPlayerName(e.target.value)}
+                        style={{ maxWidth: '200px' }}
+                      />
+                      <Button color="success" onClick={handleSaveScore}>Save Score</Button>
+                    </div>
+                  )}
+                </CardBody>
+              </Card>
             )}
-          </div>
-        )}
 
-        <div className="dealer-section">
-          <h2>Dealer ({dealerHidden ? '?' : dealerScore})</h2>
-          <div className="cards-display">
-            {dealerHand.map((card, index) => (
-              <div key={card.id} className="card">
-                {dealerHidden && index === 1 ? (
-                  <div className="card-back">🂠</div>
-                ) : (
-                  <>
-                    <span className={`rank ${card.suit === '♥' || card.suit === '♦' ? 'red' : ''}`}>
-                      {card.rank}
-                    </span>
-                    <span className={`suit ${card.suit === '♥' || card.suit === '♦' ? 'red' : ''}`}>
-                      {card.suit}
-                    </span>
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="player-section">
-          <h2>Player ({playerScore})</h2>
-          <div className="cards-display">
-            {playerHand.map(card => (
-              <div key={card.id} className="card">
-                <span className={`rank ${card.suit === '♥' || card.suit === '♦' ? 'red' : ''}`}>
-                  {card.rank}
-                </span>
-                <span className={`suit ${card.suit === '♥' || card.suit === '♦' ? 'red' : ''}`}>
-                  {card.suit}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {gameStatus === 'betting' && (
-          <div className="game-actions">
-            <button onClick={startGame} className="action-btn">Deal Cards</button>
-          </div>
-        )}
-
-        {gameStatus === 'playing' && (
-          <div className="game-actions">
-            <button onClick={hit} className="action-btn">Hit</button>
-            <button onClick={stand} className="action-btn">Stand</button>
-          </div>
-        )}
-
-        {gameStatus === 'finished' && (
-          <div className="game-result">
-            <h2>{getGameResult()}</h2>
-          </div>
-        )}
-
-        <div className="high-scores">
-          <h3>High Scores</h3>
-          <div className="scores-list">
-            {highScores.length > 0 ? (
-              highScores.map((score, index) => (
-                <div key={score.id} className="score-item">
-                  <span className="rank">#{index + 1}</span>
-                  <span className="name">{score.playerName}</span>
-                  <span className="score">{score.score}</span>
+            <Card className="mb-3">
+              <CardBody>
+                <CardTitle tag="h5">Dealer ({dealerHidden ? '?' : dealerScore})</CardTitle>
+                <div className="cards-display">
+                  {dealerHand.map((card, index) => (
+                    <div key={card.id} className="card">
+                      {dealerHidden && index === 1 ? (
+                        <div className="card-back">🂠</div>
+                      ) : (
+                        <>
+                          <span className={`rank ${card.suit === '♥' || card.suit === '♦' ? 'red' : ''}`}>
+                            {card.rank}
+                          </span>
+                          <span className={`suit ${card.suit === '♥' || card.suit === '♦' ? 'red' : ''}`}>
+                            {card.suit}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              ))
-            ) : (
-              <p>No scores yet</p>
+              </CardBody>
+            </Card>
+
+            <Card className="mb-3">
+              <CardBody>
+                <CardTitle tag="h5">Player ({playerScore})</CardTitle>
+                <div className="cards-display">
+                  {playerHand.map(card => (
+                    <div key={card.id} className="card">
+                      <span className={`rank ${card.suit === '♥' || card.suit === '♦' ? 'red' : ''}`}>
+                        {card.rank}
+                      </span>
+                      <span className={`suit ${card.suit === '♥' || card.suit === '♦' ? 'red' : ''}`}>
+                        {card.suit}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </CardBody>
+            </Card>
+
+            {gameStatus === 'betting' && (
+              <Row className="mb-3">
+                <Col className="text-center">
+                  <Button color="primary" size="lg" onClick={startGame}>Deal Cards</Button>
+                </Col>
+              </Row>
             )}
-          </div>
-        </div>
-      </div>
-    </div>
+
+            {gameStatus === 'playing' && (
+              <Row className="mb-3">
+                <Col className="text-center">
+                  <div className="d-flex gap-2 justify-content-center">
+                    <Button color="success" size="lg" onClick={hit}>Hit</Button>
+                    <Button color="warning" size="lg" onClick={stand}>Stand</Button>
+                  </div>
+                </Col>
+              </Row>
+            )}
+
+            {gameStatus === 'finished' && (
+              <Card className="mb-3">
+                <CardBody className="text-center">
+                  <CardTitle tag="h2">{getGameResult()}</CardTitle>
+                </CardBody>
+              </Card>
+            )}
+
+            <Card>
+              <CardBody>
+                <CardTitle tag="h5">High Scores</CardTitle>
+                <div className="scores-list">
+                  {highScores.length > 0 ? (
+                    highScores.map((score, index) => (
+                      <div key={score.id} className="score-item d-flex justify-content-between align-items-center p-2 mb-2 bg-light rounded">
+                        <span className="fw-bold text-primary">#{index + 1}</span>
+                        <span className="flex-grow-1 ms-3">{score.playerName}</span>
+                        <span className="fw-bold">{score.score}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <CardText className="text-muted">No scores yet</CardText>
+                  )}
+                </div>
+              </CardBody>
+            </Card>
+          </CardBody>
+        </Card>
+      </Container>
+    </Container>
   );
 }
 

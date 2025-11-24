@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Container, Row, Col, Button, Card, CardBody, CardTitle, CardText, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { saveScore, getHighScores } from '../../firebase/scores';
 import './Set.css';
 
@@ -16,6 +17,8 @@ function Set({ onBack }) {
   const [showRules, setShowRules] = useState(false);
   const [gameState, setGameState] = useState('');
   const [freeCards, setFreeCards] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     loadNewGame();
@@ -33,20 +36,39 @@ function Set({ onBack }) {
   }, [gameStatus]);
 
   const loadNewGame = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const response = await fetch(`${API_BASE}/set/start?possible-sets=true`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
+      if (!data.layout || !data.state) {
+        throw new Error('Invalid response from API');
+      }
       setLayout(data.layout);
-      setFreeCards(data.freeCards);
+      setFreeCards(data.freeCards || []);
       setGameState(data.state);
       setScore(0);
       setTime(0);
       setSelectedCards([]);
       setGameStatus('playing');
+      setLoading(false);
     } catch (error) {
       console.error('Error loading Set game:', error);
-      alert('Failed to load new game. Please try again.');
+      setError(`Failed to load game: ${error.message}. Please check your connection and try again.`);
+      setLoading(false);
+      // Initialize with empty layout to prevent blank screen
+      setLayout([]);
+      setFreeCards([]);
+      setGameState('');
     }
+  };
+
+  const loadHighScores = async () => {
+    const scores = await getHighScores('Set');
+    setHighScores(scores);
   };
 
   const handleCardClick = (card) => {
@@ -149,100 +171,149 @@ function Set({ onBack }) {
   };
 
   return (
-    <div className="set-game">
-      <button className="back-button" onClick={onBack}>← Back to Menu</button>
-      <button className="rules-button" onClick={() => setShowRules(true)}>?</button>
+    <Container fluid className="set-game">
+      <Row className="mb-3">
+        <Col>
+          <Button color="secondary" onClick={onBack}>← Back to Menu</Button>
+          <Button color="info" onClick={() => setShowRules(true)} className="ms-2">?</Button>
+        </Col>
+      </Row>
       
-      <div className="set-container">
-        <div className="set-header">
-          <h1>Set Card Game</h1>
-          <div className="header-controls">
-            <div className="game-stats-header">
-              <span>Score: {score}</span>
-              <span>Time: {formatTime(time)}</span>
-            </div>
-            <button onClick={loadNewGame} className="new-game-btn">New Game</button>
-          </div>
-        </div>
-
-        {showRules && (
-          <div className="rules-modal" onClick={() => setShowRules(false)}>
-            <div className="rules-content" onClick={(e) => e.stopPropagation()}>
-              <h2>Set Game Rules</h2>
-              <p>Find sets of 3 cards where for each feature, all cards are either:</p>
-              <ul>
-                <li><strong>All the same</strong> (e.g., all red, all diamonds, all solid)</li>
-                <li><strong>All different</strong> (e.g., one red, one green, one purple)</li>
-              </ul>
-              <p>Features: Number (1, 2, or 3), Shape (diamond, squiggle, oval), Color (red, green, purple), Shading (solid, striped, open)</p>
-              <button onClick={() => setShowRules(false)} className="close-rules-btn">Close</button>
-            </div>
-          </div>
-        )}
-
-        {gameStatus === 'won' && showNameInput && (
-          <div className="score-modal">
-            <h2>Congratulations! Game Complete!</h2>
-            <p>Score: {score} sets | Time: {formatTime(time)}</p>
-            <input
-              type="text"
-              placeholder="Enter your name"
-              value={playerName}
-              onChange={(e) => setPlayerName(e.target.value)}
-              className="name-input"
-            />
-            <button onClick={handleSaveScore} className="save-score-btn">Save Score</button>
-          </div>
-        )}
-
-        <div className="cards-layout">
-          {layout.map((card) => {
-            const isSelected = selectedCards.find(c => c._id === card._id);
-            const display = getCardDisplay(card);
-            return (
-              <div
-                key={card._id}
-                className={`set-card ${isSelected ? 'selected' : ''}`}
-                onClick={() => handleCardClick(card)}
-              >
-                <div className="card-content" style={{ color: display.color }}>
-                  {Array(display.number).fill(0).map((_, i) => (
-                    <span key={i} className="card-symbol">{display.symbol}</span>
-                  ))}
+      <Container>
+        <Card>
+          <CardBody>
+            <Row className="align-items-center mb-3">
+              <Col md={6}>
+                <CardTitle tag="h1">Set Card Game</CardTitle>
+              </Col>
+              <Col md={6} className="text-md-end">
+                <div className="d-flex gap-3 justify-content-md-end justify-content-start flex-wrap">
+                  <div className="text-center">
+                    <div className="fw-bold text-primary">Score</div>
+                    <div className="fs-4">{score}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="fw-bold text-primary">Time</div>
+                    <div className="fs-4">{formatTime(time)}</div>
+                  </div>
+                  <Button color="primary" onClick={loadNewGame}>New Game</Button>
                 </div>
-                <div className="card-info">
-                  <small>{display.fill}</small>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              </Col>
+            </Row>
 
-        {selectedCards.length === 3 && (
-          <div className="set-actions">
-            <button onClick={checkSet} className="check-set-btn">Check Set</button>
-            <button onClick={() => setSelectedCards([])} className="clear-selection-btn">Clear Selection</button>
-          </div>
-        )}
+            <Modal isOpen={showRules} toggle={() => setShowRules(false)}>
+              <ModalHeader toggle={() => setShowRules(false)}>Set Game Rules</ModalHeader>
+              <ModalBody>
+                <p>Find sets of 3 cards where for each feature, all cards are either:</p>
+                <ul>
+                  <li><strong>All the same</strong> (e.g., all red, all diamonds, all solid)</li>
+                  <li><strong>All different</strong> (e.g., one red, one green, one purple)</li>
+                </ul>
+                <p>Features: Number (1, 2, or 3), Shape (diamond, squiggle, oval), Color (red, green, purple), Shading (solid, striped, open)</p>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="secondary" onClick={() => setShowRules(false)}>Close</Button>
+              </ModalFooter>
+            </Modal>
 
-        <div className="high-scores">
-          <h3>High Scores</h3>
-          <div className="scores-list">
-            {highScores.length > 0 ? (
-              highScores.map((scoreItem, index) => (
-                <div key={scoreItem.id} className="score-item">
-                  <span className="rank">#{index + 1}</span>
-                  <span className="name">{scoreItem.playerName}</span>
-                  <span className="score">{scoreItem.score} ({scoreItem.moves || 0} sets)</span>
-                </div>
-              ))
-            ) : (
-              <p>No scores yet</p>
+            {error && (
+              <Card className="mb-3 border-danger">
+                <CardBody className="text-center">
+                  <CardText className="text-danger">{error}</CardText>
+                  <Button color="primary" onClick={loadNewGame}>Retry</Button>
+                </CardBody>
+              </Card>
             )}
-          </div>
-        </div>
-      </div>
-    </div>
+
+            {loading && (
+              <Card className="mb-3">
+                <CardBody className="text-center">
+                  <CardText>Loading game...</CardText>
+                </CardBody>
+              </Card>
+            )}
+
+            {gameStatus === 'won' && showNameInput && (
+              <Card className="mb-3 bg-light">
+                <CardBody className="text-center">
+                  <CardTitle tag="h2">Congratulations! Game Complete!</CardTitle>
+                  <CardText>Score: {score} sets | Time: {formatTime(time)}</CardText>
+                  <div className="d-flex gap-2 justify-content-center flex-wrap">
+                    <Input
+                      type="text"
+                      placeholder="Enter your name"
+                      value={playerName}
+                      onChange={(e) => setPlayerName(e.target.value)}
+                      style={{ maxWidth: '200px' }}
+                    />
+                    <Button color="success" onClick={handleSaveScore}>Save Score</Button>
+                  </div>
+                </CardBody>
+              </Card>
+            )}
+
+            {!loading && layout.length > 0 && (
+              <Row className="mb-3">
+                <Col>
+                  <div className="cards-layout">
+                    {layout.map((card) => {
+                      const isSelected = selectedCards.find(c => c._id === card._id);
+                      const display = getCardDisplay(card);
+                      return (
+                        <div
+                          key={card._id}
+                          className={`set-card ${isSelected ? 'selected' : ''}`}
+                          onClick={() => handleCardClick(card)}
+                        >
+                          <div className="card-content" style={{ color: display.color }}>
+                            {Array(display.number).fill(0).map((_, i) => (
+                              <span key={i} className="card-symbol">{display.symbol}</span>
+                            ))}
+                          </div>
+                          <div className="card-info">
+                            <small>{display.fill}</small>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </Col>
+              </Row>
+            )}
+
+            {selectedCards.length === 3 && !loading && (
+              <Row className="mb-3">
+                <Col className="text-center">
+                  <div className="d-flex gap-2 justify-content-center">
+                    <Button color="success" size="lg" onClick={checkSet}>Check Set</Button>
+                    <Button color="danger" size="lg" onClick={() => setSelectedCards([])}>Clear Selection</Button>
+                  </div>
+                </Col>
+              </Row>
+            )}
+
+            <Card>
+              <CardBody>
+                <CardTitle tag="h5">High Scores</CardTitle>
+                <div className="scores-list">
+                  {highScores.length > 0 ? (
+                    highScores.map((scoreItem, index) => (
+                      <div key={scoreItem.id} className="score-item d-flex justify-content-between align-items-center p-2 mb-2 bg-light rounded">
+                        <span className="fw-bold text-primary">#{index + 1}</span>
+                        <span className="flex-grow-1 ms-3">{scoreItem.playerName}</span>
+                        <span className="fw-bold">{scoreItem.score} ({scoreItem.moves || 0} sets)</span>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-muted">No scores yet</p>
+                  )}
+                </div>
+              </CardBody>
+            </Card>
+          </CardBody>
+        </Card>
+      </Container>
+    </Container>
   );
 }
 

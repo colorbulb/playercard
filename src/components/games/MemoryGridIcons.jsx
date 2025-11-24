@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Container, Row, Col, Button, Card, CardBody, CardTitle, CardText, Input } from 'reactstrap';
 import { saveScore, getHighScores } from '../../firebase/scores';
 import './MemoryGridIcons.css';
 
@@ -203,112 +204,147 @@ function MemoryGridIcons({ difficulty, onBack }) {
   };
 
   return (
-    <div className="memory-grid-icons-game">
-      <button className="back-button" onClick={onBack}>← Back to Menu</button>
+    <Container fluid className="memory-grid-icons-game">
+      <Row className="mb-3">
+        <Col>
+          <Button color="secondary" onClick={onBack}>← Back to Menu</Button>
+        </Col>
+      </Row>
       
-      <div className="memory-icons-container">
-        <div className="memory-icons-header">
-          <h1>Memory Grid Icons - {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}</h1>
-          <button onClick={initializeGame} className="new-game-btn">New Game</button>
-        </div>
+      <Container>
+        <Card>
+          <CardBody>
+            <Row className="align-items-center mb-3">
+              <Col md={6}>
+                <CardTitle tag="h1">Memory Grid Icons - {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}</CardTitle>
+              </Col>
+              <Col md={6} className="text-md-end">
+                <Button color="primary" onClick={initializeGame}>New Game</Button>
+              </Col>
+            </Row>
 
-        <div className="game-stats">
-          <div className="stat">
-            <span className="stat-label">Time:</span>
-            <span className="stat-value">{formatTime(time)}</span>
-          </div>
-          <div className="stat">
-            <span className="stat-label">Moves:</span>
-            <span className="stat-value">{moves}</span>
-          </div>
-          <div className="stat">
-            <span className="stat-label">Pairs Found:</span>
-            <span className="stat-value">{matchedPairs.length / 2} / {config.pairs}</span>
-          </div>
-          {highestScore && highestScore.time && (
-            <div className="stat">
-              <span className="stat-label">Best Time:</span>
-              <span className="stat-value">{formatTime(highestScore.time)}</span>
-            </div>
-          )}
-        </div>
-        
-        {timeRemaining !== null && highestScore && highestScore.time && gameStatus === 'playing' && (
-          <div className="countdown-timer">
-            <div className="countdown-label">Time to beat record:</div>
-            <div className="countdown-bar-container">
-              <div 
-                className="countdown-bar" 
-                style={{ 
-                  width: `${Math.max(0, Math.min(100, (timeRemaining / highestScore.time) * 100))}%`,
-                  backgroundColor: timeRemaining > highestScore.time * 0.5 ? '#28a745' : timeRemaining > highestScore.time * 0.25 ? '#ffc107' : '#dc3545'
-                }}
-              />
-            </div>
-            <div className="countdown-time">
-              {timeRemaining > 0 ? formatTime(timeRemaining) : '0:00 (Record beaten!)'}
-            </div>
-          </div>
-        )}
-        
-        {timeRemaining !== null && timeRemaining === 0 && time > highestScore.time && gameStatus === 'playing' && (
-          <div className="record-beaten">
-            🎉 You beat the record! Keep going!
-          </div>
-        )}
-
-        {gameStatus === 'won' && showNameInput && (
-          <div className="score-modal">
-            <h2>Congratulations! You completed the game!</h2>
-            <p>Time: {formatTime(time)} | Moves: {moves}</p>
-            <input
-              type="text"
-              placeholder="Enter your name"
-              value={playerName}
-              onChange={(e) => setPlayerName(e.target.value)}
-              className="name-input"
-            />
-            <button onClick={handleSaveScore} className="save-score-btn">Save Score</button>
-          </div>
-        )}
-
-        <div 
-          className="memory-icons-grid" 
-          style={{ 
-            gridTemplateColumns: `repeat(${config.size}, 1fr)`,
-            maxWidth: `${config.size * 100}px`
-          }}
-        >
-          {grid.map(card => (
-            <div
-              key={card.id}
-              className={`memory-icon-card ${card.flipped ? 'flipped' : ''} ${card.matched ? 'matched' : ''}`}
-              onClick={() => handleCardClick(card)}
-            >
-              <div className="icon-card-front">?</div>
-              <div className="icon-card-back">{card.icon}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="high-scores">
-          <h3>High Scores - {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}</h3>
-          <div className="scores-list">
-            {highScores.length > 0 ? (
-              highScores.map((score, index) => (
-                <div key={score.id} className="score-item">
-                  <span className="rank">#{index + 1}</span>
-                  <span className="name">{score.playerName}</span>
-                  <span className="score">{score.score}</span>
+            <Row className="mb-3">
+              <Col md={3} className="text-center mb-2">
+                <div className="p-3 bg-light rounded">
+                  <div className="fw-bold text-muted">Time</div>
+                  <div className="fs-4 text-primary">{formatTime(time)}</div>
                 </div>
-              ))
-            ) : (
-              <p>No scores yet</p>
+              </Col>
+              <Col md={3} className="text-center mb-2">
+                <div className="p-3 bg-light rounded">
+                  <div className="fw-bold text-muted">Moves</div>
+                  <div className="fs-4 text-primary">{moves}</div>
+                </div>
+              </Col>
+              <Col md={3} className="text-center mb-2">
+                <div className="p-3 bg-light rounded">
+                  <div className="fw-bold text-muted">Pairs Found</div>
+                  <div className="fs-4 text-primary">{matchedPairs.length / 2} / {config.pairs}</div>
+                </div>
+              </Col>
+              {highestScore && highestScore.time && (
+                <Col md={3} className="text-center mb-2">
+                  <div className="p-3 bg-light rounded">
+                    <div className="fw-bold text-muted">Best Time</div>
+                    <div className="fs-4 text-primary">{formatTime(highestScore.time)}</div>
+                  </div>
+                </Col>
+              )}
+            </Row>
+            
+            {timeRemaining !== null && highestScore && highestScore.time && gameStatus === 'playing' && (
+              <Card className="mb-3">
+                <CardBody>
+                  <CardText className="text-center mb-2">Time to beat record:</CardText>
+                  <div className="progress mb-2" style={{ height: '20px' }}>
+                    <div 
+                      className="progress-bar" 
+                      role="progressbar"
+                      style={{ 
+                        width: `${Math.max(0, Math.min(100, (timeRemaining / highestScore.time) * 100))}%`,
+                        backgroundColor: timeRemaining > highestScore.time * 0.5 ? '#28a745' : timeRemaining > highestScore.time * 0.25 ? '#ffc107' : '#dc3545'
+                      }}
+                    />
+                  </div>
+                  <div className="text-center fw-bold text-primary">
+                    {timeRemaining > 0 ? formatTime(timeRemaining) : '0:00 (Record beaten!)'}
+                  </div>
+                </CardBody>
+              </Card>
             )}
-          </div>
-        </div>
-      </div>
-    </div>
+            
+            {timeRemaining !== null && timeRemaining === 0 && time > highestScore.time && gameStatus === 'playing' && (
+              <Card className="mb-3 bg-success text-white">
+                <CardBody className="text-center">
+                  <CardText className="mb-0 fs-5">🎉 You beat the record! Keep going!</CardText>
+                </CardBody>
+              </Card>
+            )}
+
+            {gameStatus === 'won' && showNameInput && (
+              <Card className="mb-3 bg-light">
+                <CardBody className="text-center">
+                  <CardTitle tag="h2">Congratulations! You completed the game!</CardTitle>
+                  <CardText>Time: {formatTime(time)} | Moves: {moves}</CardText>
+                  <div className="d-flex gap-2 justify-content-center flex-wrap mt-3">
+                    <Input
+                      type="text"
+                      placeholder="Enter your name"
+                      value={playerName}
+                      onChange={(e) => setPlayerName(e.target.value)}
+                      style={{ maxWidth: '200px' }}
+                    />
+                    <Button color="success" onClick={handleSaveScore}>Save Score</Button>
+                  </div>
+                </CardBody>
+              </Card>
+            )}
+
+            <Row className="justify-content-center mb-4">
+              <Col xs="auto">
+                <div 
+                  className="memory-icons-grid" 
+                  style={{ 
+                    gridTemplateColumns: `repeat(${config.size}, 1fr)`,
+                    maxWidth: `${config.size * 100}px`
+                  }}
+                >
+                  {grid.map(card => (
+                    <div
+                      key={card.id}
+                      className={`memory-icon-card ${card.flipped ? 'flipped' : ''} ${card.matched ? 'matched' : ''}`}
+                      onClick={() => handleCardClick(card)}
+                    >
+                      <div className="icon-card-front">?</div>
+                      <div className="icon-card-back">{card.icon}</div>
+                    </div>
+                  ))}
+                </div>
+              </Col>
+            </Row>
+
+            <Card>
+              <CardBody>
+                <CardTitle tag="h5">High Scores - {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}</CardTitle>
+                <div className="scores-list">
+                  {highScores.length > 0 ? (
+                    highScores.map((score, index) => (
+                      <div key={score.id} className="score-item d-flex justify-content-between align-items-center p-2 mb-2 bg-light rounded">
+                        <span className="fw-bold text-primary">#{index + 1}</span>
+                        <span className="flex-grow-1 ms-3">{score.playerName}</span>
+                        <span className="fw-bold">{score.score}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <CardText className="text-muted">No scores yet</CardText>
+                  )}
+                </div>
+              </CardBody>
+            </Card>
+          </CardBody>
+        </Card>
+      </Container>
+    </Container>
   );
 }
 

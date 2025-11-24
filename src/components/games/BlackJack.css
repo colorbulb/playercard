@@ -105,7 +105,9 @@
   min-height: 100px;
 }
 
-.card {
+/* Playing card styles - scoped to avoid Bootstrap conflicts */
+.blackjack-game .card,
+.blackjack-game .cards-display .card {
   width: 70px;
   height: 100px;
   background: white;
@@ -119,17 +121,44 @@
   font-weight: bold;
 }
 
-.card .rank {
+.blackjack-game .card .rank,
+.blackjack-game .cards-display .card .rank {
   font-size: 1.3rem;
 }
 
-.card .suit {
+.blackjack-game .card .suit,
+.blackjack-game .cards-display .card .suit {
   font-size: 1.8rem;
   text-align: center;
 }
 
-.card .rank.red, .card .suit.red {
+.blackjack-game .card .rank.red,
+.blackjack-game .card .suit.red,
+.blackjack-game .cards-display .card .rank.red,
+.blackjack-game .cards-display .card .suit.red {
   color: red;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .blackjack-game {
+    padding: 15px;
+  }
+
+  .blackjack-game .card,
+  .blackjack-game .cards-display .card {
+    width: 60px;
+    height: 85px;
+  }
+}
+
+@media (max-width: 576px) {
+  .blackjack-game .card,
+  .blackjack-game .cards-display .card {
+    width: 50px;
+    height: 72px;
+    font-size: 0.9rem;
+  }
 }
 
 .card-back {

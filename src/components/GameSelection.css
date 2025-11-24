@@ -1,12 +1,13 @@
 .game-selection {
   text-align: center;
   padding: 40px 20px;
-  max-width: 1200px;
   width: 100%;
+  min-height: 100vh;
 }
 
 .logo {
   max-width: 200px;
+  width: 100%;
   height: auto;
   margin-bottom: 20px;
   display: block;
@@ -15,141 +16,87 @@
 }
 
 .game-selection-title {
-  font-size: 3rem;
+  font-size: clamp(2rem, 5vw, 3rem);
   color: white;
   margin-bottom: 10px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .game-selection-subtitle {
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
   color: rgba(255, 255, 255, 0.9);
   margin-bottom: 40px;
 }
 
-.game-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
-  margin-top: 40px;
-}
-
-.game-card {
-  background: white;
+/* Game card styles - scoped to avoid Bootstrap conflicts */
+.game-selection .game-card {
+  background: white !important;
   border-radius: 20px;
-  padding: 40px 20px;
+  padding: 30px 20px;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.game-card:hover {
+.game-selection .game-card:hover {
   transform: translateY(-10px);
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
 }
 
-.game-icon {
-  font-size: 4rem;
+.game-selection .game-icon {
+  font-size: clamp(3rem, 8vw, 4rem);
   margin-bottom: 20px;
+  line-height: 1;
 }
 
-.game-card h2 {
-  font-size: 2rem;
+.game-selection .game-card h2 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
   color: #667eea;
   margin-bottom: 10px;
 }
 
-.game-card p {
+.game-selection .game-card p {
   color: #666;
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  margin-bottom: 0;
 }
 
-.difficulty-selection {
-  background: white;
-  border-radius: 20px;
-  padding: 40px;
-  max-width: 500px;
-  margin: 0 auto;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+/* Responsive breakpoints */
+@media (max-width: 768px) {
+  .game-selection {
+    padding: 20px 15px;
+  }
+
+  .game-selection-title {
+    font-size: 2rem;
+  }
+
+  .game-selection-subtitle {
+    font-size: 1rem;
+  }
+
+  .game-selection .game-card {
+    padding: 20px 15px;
+  }
+
+  .game-selection .game-icon {
+    font-size: 3rem;
+  }
 }
 
-.difficulty-selection h2 {
-  font-size: 2rem;
-  color: #667eea;
-  margin-bottom: 30px;
-}
+@media (max-width: 576px) {
+  .game-selection {
+    padding: 15px 10px;
+  }
 
-.difficulty-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-bottom: 20px;
-}
-
-.difficulty-btn {
-  padding: 15px 30px;
-  font-size: 1.2rem;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: bold;
-  color: white;
-}
-
-.difficulty-btn.easy {
-  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-}
-
-.difficulty-btn.medium {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
-
-.difficulty-btn.expert {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-}
-
-.difficulty-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
-
-.back-btn {
-  padding: 10px 20px;
-  background: #667eea;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-.back-btn:hover {
-  background: #5568d3;
-  transform: scale(1.05);
-}
-
-.memory-options-selection {
-  background: white;
-  border-radius: 20px;
-  padding: 40px;
-  max-width: 800px;
-  margin: 0 auto;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-
-.memory-options-selection h2 {
-  font-size: 2rem;
-  color: #667eea;
-  margin-bottom: 30px;
-  text-align: center;
-}
-
-.memory-options-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
-  margin-bottom: 20px;
+  .game-selection .game-card {
+    padding: 15px 10px;
+  }
 }
 
