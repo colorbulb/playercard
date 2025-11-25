@@ -8,6 +8,7 @@ import Sudoku from './components/games/Sudoku';
 import Takuzu from './components/games/Takuzu';
 import Set from './components/games/Set';
 import Minesweeper from './components/games/Minesweeper';
+import Game2048 from './components/games/Game2048';
 import './App.css';
 
 function App() {
@@ -44,6 +45,8 @@ function App() {
         <Set onBack={handleBackToMenu} />
       ) : currentGame === 'minesweeper' ? (
         <Minesweeper onBack={handleBackToMenu} />
+      ) : currentGame === 'game2048' ? (
+        <Game2048 onBack={handleBackToMenu} />
       ) : null}
     </div>
   );

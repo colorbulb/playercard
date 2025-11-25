@@ -93,6 +93,16 @@ function GameSelection({ onGameSelect }) {
               </CardBody>
             </Card>
           </Col>
+          
+          <Col md={6} lg={4} xl={3}>
+            <Card className="game-card h-100" onClick={() => onGameSelect('game2048')}>
+              <CardBody className="text-center">
+                <div className="game-icon">🔢</div>
+                <CardTitle tag="h2">2048</CardTitle>
+                <CardText>Slide and merge tiles</CardText>
+              </CardBody>
+            </Card>
+          </Col>
         </Row>
       ) : showMemoryOptions ? (
         <Row className="justify-content-center">
