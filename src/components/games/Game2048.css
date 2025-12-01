@@ -8,14 +8,6 @@
   flex-direction: column;
 }
 
-/* Landscape mode optimization */
-@media (orientation: landscape) and (max-height: 500px) {
-  .game-2048 {
-    padding: 5px 10px;
-    overflow-y: hidden;
-  }
-}
-
 .game-2048-container {
   touch-action: none;
   -webkit-touch-callout: none;
@@ -214,6 +206,11 @@
 
 /* Landscape mode - optimize for visibility without scrolling */
 @media (orientation: landscape) and (max-height: 500px) {
+  .game-2048 {
+    padding: 5px 10px;
+    overflow-y: hidden;
+  }
+
   .grid-container {
     padding: 4px;
     max-width: min(45vh, 280px);
@@ -245,43 +242,43 @@
     font-size: 12px;
   }
 
-  /* Reduce spacing in landscape mode */
-  .game-2048 .card {
-    margin-bottom: 0 !important;
+  /* Reduce spacing in landscape mode - using higher specificity instead of !important */
+  .game-2048 .container .card {
+    margin-bottom: 0;
   }
 
-  .game-2048 .card-body {
-    padding: 0.5rem !important;
+  .game-2048 .container .card-body {
+    padding: 0.5rem;
   }
 
-  .game-2048 .mb-2 {
-    margin-bottom: 0.3rem !important;
+  .game-2048 .container .mb-2 {
+    margin-bottom: 0.3rem;
   }
 
-  .game-2048 .mt-2 {
-    margin-top: 0.3rem !important;
+  .game-2048 .container .mt-2 {
+    margin-top: 0.3rem;
   }
 
-  .game-2048 h1 {
-    font-size: 1rem !important;
+  .game-2048 .container h1 {
+    font-size: 1rem;
   }
 
-  .game-2048 .btn-sm {
+  .game-2048 .container .btn-sm {
     padding: 0.15rem 0.4rem;
     font-size: 0.75rem;
   }
 
-  .game-2048 .px-2 {
-    padding-left: 0.3rem !important;
-    padding-right: 0.3rem !important;
+  .game-2048 .container .px-2 {
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
   }
 
-  .game-2048 .row {
+  .game-2048 .container .row {
     margin-left: -0.25rem;
     margin-right: -0.25rem;
   }
 
-  .game-2048 .row > * {
+  .game-2048 .container .row > * {
     padding-left: 0.25rem;
     padding-right: 0.25rem;
   }
