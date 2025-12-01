@@ -282,22 +282,47 @@ function Game2048({ onBack }) {
     return value <= 4 ? '#776e65' : '#f9f6f2';
   };
 
-  // Touch/swipe handlers
+  // Touch/swipe handlers - only on the game container
   useEffect(() => {
     let touchStartX = 0;
     let touchStartY = 0;
     let touchEndX = 0;
     let touchEndY = 0;
+    let touchStartedInContainer = false;
 
     const handleTouchStart = (e) => {
-      touchStartX = e.changedTouches[0].screenX;
-      touchStartY = e.changedTouches[0].screenY;
+      // Check if touch started within the game container
+      const target = e.target.closest('.game-2048-container');
+      if (target) {
+        touchStartedInContainer = true;
+        e.preventDefault();
+        e.stopPropagation();
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+      } else {
+        touchStartedInContainer = false;
+      }
+    };
+
+    const handleTouchMove = (e) => {
+      // Only prevent default if touch started in game container
+      if (touchStartedInContainer) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
     };
 
     const handleTouchEnd = (e) => {
-      touchEndX = e.changedTouches[0].screenX;
-      touchEndY = e.changedTouches[0].screenY;
-      handleSwipeGesture();
+      // Only process swipe if touch started in game container
+      if (touchStartedInContainer) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
+        handleSwipeGesture();
+      }
+      touchStartedInContainer = false;
     };
 
     const handleSwipeGesture = () => {
@@ -326,17 +351,15 @@ function Game2048({ onBack }) {
       }
     };
 
-    const gameContainer = document.querySelector('.game-2048-container');
-    if (gameContainer) {
-      gameContainer.addEventListener('touchstart', handleTouchStart, { passive: true });
-      gameContainer.addEventListener('touchend', handleTouchEnd, { passive: true });
-    }
+    // Attach listeners to document to catch all touches
+    document.addEventListener('touchstart', handleTouchStart, { passive: false });
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchend', handleTouchEnd, { passive: false });
 
     return () => {
-      if (gameContainer) {
-        gameContainer.removeEventListener('touchstart', handleTouchStart);
-        gameContainer.removeEventListener('touchend', handleTouchEnd);
-      }
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [grid, gameStatus]);
@@ -345,27 +368,27 @@ function Game2048({ onBack }) {
     <>
       <LandscapeOverlay />
       <Container fluid className="game-2048">
-        <Row className="mb-2">
+        <Row className="mb-0" style={{ flexShrink: 0, padding: '2px 0' }}>
           <Col>
-            <Button color="secondary" size="sm" onClick={onBack}>← Back</Button>
-            <Button color="info" size="sm" onClick={() => setShowRules(true)} className="ms-2">?</Button>
+            <Button color="secondary" size="sm" onClick={onBack} style={{ fontSize: '0.75rem', padding: '2px 8px' }}>← Back</Button>
+            <Button color="info" size="sm" onClick={() => setShowRules(true)} className="ms-1" style={{ fontSize: '0.75rem', padding: '2px 8px' }}>?</Button>
           </Col>
         </Row>
         
-        <Container className="px-2">
-          <Card>
-            <CardBody className="p-3">
-              <Row className="align-items-center mb-2">
-                <Col xs={4}>
-                  <CardTitle tag="h1" className="mb-0" style={{ fontSize: '1.5rem' }}>2048</CardTitle>
+        <Container className="px-1" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+          <Card style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, margin: 0 }}>
+            <CardBody className="p-1" style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
+              <Row className="align-items-center mb-0" style={{ flexShrink: 0, margin: '2px 0' }}>
+                <Col xs={4} className="px-1">
+                  <CardTitle tag="h1" className="mb-0" style={{ fontSize: 'clamp(1rem, 4vw, 1.3rem)' }}>2048</CardTitle>
                 </Col>
-                <Col xs={4}>
+                <Col xs={4} className="px-1">
                   <div className="score-container">
                     <div className="score-label">Score</div>
                     <div className="score-value">{score}</div>
                   </div>
                 </Col>
-                <Col xs={4}>
+                <Col xs={4} className="px-1">
                   <div className="score-container">
                     <div className="score-label">Best</div>
                     <div className="score-value">{bestScore}</div>
@@ -373,28 +396,28 @@ function Game2048({ onBack }) {
                 </Col>
               </Row>
               
-              <Row className="mb-2">
-                <Col>
-                  <Button color="primary" size="sm" onClick={initializeGame} className="w-100">New Game</Button>
+              <Row className="mb-0" style={{ flexShrink: 0, margin: '2px 0' }}>
+                <Col className="px-1">
+                  <Button color="primary" size="sm" onClick={initializeGame} className="w-100" style={{ fontSize: '0.75rem', padding: '2px 4px' }}>New Game</Button>
                 </Col>
               </Row>
 
               {(gameStatus === 'won' || gameStatus === 'lost') && showNameInput && (
-                <Card className="mb-2 bg-light">
-                  <CardBody className="text-center p-2">
-                    <CardTitle tag="h5" className="mb-2">
+                <Card className="mb-0 bg-light" style={{ flexShrink: 0, margin: '2px 0' }}>
+                  <CardBody className="text-center p-1">
+                    <CardTitle tag="h5" className="mb-0" style={{ fontSize: 'clamp(0.85rem, 3vw, 1rem)' }}>
                       {gameStatus === 'won' ? '🎉 You reached 2048! 🎉' : 'Game Over!'}
                     </CardTitle>
-                    <div className="d-flex gap-2 justify-content-center flex-wrap">
+                    <div className="d-flex gap-1 justify-content-center flex-wrap mt-1">
                       <Input
                         type="text"
                         placeholder="Enter your name"
                         value={playerName}
                         onChange={(e) => setPlayerName(e.target.value)}
-                        style={{ maxWidth: '150px' }}
+                        style={{ maxWidth: '100px', fontSize: '0.75rem' }}
                         size="sm"
                       />
-                      <Button color="success" size="sm" onClick={handleSaveScore}>Save</Button>
+                      <Button color="success" size="sm" onClick={handleSaveScore} style={{ fontSize: '0.75rem', padding: '2px 8px' }}>Save</Button>
                     </div>
                   </CardBody>
                 </Card>
@@ -424,23 +447,22 @@ function Game2048({ onBack }) {
                 </div>
               </div>
 
-              {gameStatus === 'lost' && (
-                <div className="text-center mt-2 mb-2">
-                  <CardText className="text-danger mb-0" style={{ fontSize: '0.9rem' }}>No more moves available!</CardText>
+              {gameStatus === 'lost' && !showNameInput && (
+                <div className="text-center mt-0 mb-0" style={{ flexShrink: 0, margin: '2px 0' }}>
+                  <CardText className="text-danger mb-0" style={{ fontSize: 'clamp(0.7rem, 2.5vw, 0.85rem)' }}>No more moves available!</CardText>
                 </div>
               )}
 
-              <Row className="mt-2">
+              <Row className="mt-0" style={{ flexShrink: 0, margin: '2px 0' }}>
                 <Col>
-                  <div className="d-flex gap-2 justify-content-center">
-                    <Button color="outline-primary" size="sm" onClick={() => handleMove('up')}>↑</Button>
-                    <Button color="outline-secondary" size="sm" onClick={() => handleMove('left')}>←</Button>
-                    <Button color="outline-secondary" size="sm" onClick={() => handleMove('right')}>→</Button>
-                    <Button color="outline-primary" size="sm" onClick={() => handleMove('down')}>↓</Button>
+                  <div className="d-flex gap-1 justify-content-center">
+                    <Button color="outline-primary" size="sm" onClick={() => handleMove('up')} style={{ fontSize: '0.75rem', padding: '2px 6px' }}>↑</Button>
+                    <Button color="outline-secondary" size="sm" onClick={() => handleMove('left')} style={{ fontSize: '0.75rem', padding: '2px 6px' }}>←</Button>
+                    <Button color="outline-secondary" size="sm" onClick={() => handleMove('right')} style={{ fontSize: '0.75rem', padding: '2px 6px' }}>→</Button>
+                    <Button color="outline-primary" size="sm" onClick={() => handleMove('down')} style={{ fontSize: '0.75rem', padding: '2px 6px' }}>↓</Button>
                   </div>
                 </Col>
               </Row>
-
             </CardBody>
           </Card>
         </Container>

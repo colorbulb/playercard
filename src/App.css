@@ -7,3 +7,11 @@
   padding: 20px;
 }
 
+/* On small screens (phones/tablets), remove outer padding so game pages
+   (like 2048) can use the full viewport height without causing scroll. */
+@media (max-width: 768px) {
+  .App {
+    padding: 0;
+  }
+}
+
