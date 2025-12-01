@@ -213,7 +213,7 @@
 
   .grid-container {
     padding: 4px;
-    max-width: min(45vh, 280px);
+    max-width: min(65vh, 380px);
   }
 
   .grid-cell {
@@ -281,6 +281,11 @@
   .game-2048 .container .row > * {
     padding-left: 0.25rem;
     padding-right: 0.25rem;
+  }
+
+  /* Hide direction buttons in landscape mode to make grid bigger */
+  .game-2048 .direction-buttons {
+    display: none;
   }
 }
 

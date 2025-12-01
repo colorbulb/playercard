@@ -430,7 +430,7 @@ function Game2048({ onBack }) {
                 </div>
               )}
 
-              <Row className="mt-2">
+              <Row className="mt-2 direction-buttons">
                 <Col>
                   <div className="d-flex gap-2 justify-content-center">
                     <Button color="outline-primary" size="sm" onClick={() => handleMove('up')}>↑</Button>
