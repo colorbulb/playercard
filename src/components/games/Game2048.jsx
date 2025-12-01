@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Card, CardBody, CardTitle, CardText, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { saveScore, getHighScores } from '../../firebase/scores';
-import LandscapeOverlay from '../LandscapeOverlay';
 import './Game2048.css';
 
 const GRID_SIZE = 4;
@@ -343,7 +342,6 @@ function Game2048({ onBack }) {
 
   return (
     <>
-      <LandscapeOverlay />
       <Container fluid className="game-2048">
         <Row className="mb-2">
           <Col>
